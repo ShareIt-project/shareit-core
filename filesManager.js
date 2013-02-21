@@ -2,7 +2,7 @@
  * 
  * @param {IDBDatabase} db ShareIt! database.
  */
-function FilesManager(db)
+function FilesManager(db, peersManager)
 {
   var self = this;
 
@@ -56,6 +56,36 @@ function FilesManager(db)
       transfer_query(fileentry);
     }, onerror);
   };
+
+  this.transfer_update = function(fileentry, pending_chunks)
+  {
+    var chunks = fileentry.size / chunksize;
+    if(chunks % 1 != 0)
+       chunks = Math.floor(chunks) + 1;
+
+    // Notify about transfer update
+    var event = document.createEvent("Event");
+        event.initEvent('transfer.update',true,true);
+        event.data = [fileentry, 1 - pending_chunks / chunks]
+
+    this.dispatchEvent(event);
+  };
+
+  this.transfer_end = function(fileentry)
+  {
+    // Auto-save downloaded file
+    savetodisk(fileentry.blob, fileentry.name);
+
+    // Notify about transfer end
+    var event = document.createEvent("Event");
+        event.initEvent('transfer.end',true,true);
+        event.data = [fileentry]
+
+    self.dispatchEvent(event);
+
+    console.log('Transfer of ' + fileentry.name + ' finished!');
+  };
+
 
   /**
    * Update the data content of a {Fileentry}

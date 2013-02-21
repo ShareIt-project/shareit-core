@@ -16,11 +16,13 @@ webp2p.Webp2pLocal = function()
   {
     var peersManager = new PeersManager(db)
 
+    var filesManager = new FilesManager(db, peersManager)
+
     // Init cache backup system
-    var cacheBackup = new CacheBackup(db, peersManager)
+    var cacheBackup = new CacheBackup(db, filesManager)
 
     // Init sharedpoints manager
-    var sharedpointsManager = new SharedpointsManager(db, peersManager)
+    var sharedpointsManager = new SharedpointsManager(db, filesManager)
 
 
     self.cacheBackup_export = function(onfinish, onprogress, onerror)

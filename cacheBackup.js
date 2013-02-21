@@ -1,4 +1,5 @@
-function CacheBackup(db, peersManager) {
+function CacheBackup(db, filesManager)
+{
   zip.workerScriptsPath = 'js/webp2p/lib/zip.js/';
 
   this.export = function(onfinish, onprogress, onerror) {
@@ -52,9 +53,11 @@ function CacheBackup(db, peersManager) {
     });
   };
 
-  this.import = function(blob, onerror) {
+  this.import = function(blob, onerror)
+  {
     var fs = new zip.fs.FS();
-    fs.importBlob(blob, function() {
+    fs.importBlob(blob, function()
+    {
       // Check blobs metadata
       var files = fs.root.getChildByName('files.json');
 
@@ -64,35 +67,43 @@ function CacheBackup(db, peersManager) {
 
         // Extract blobs data and add it to cache
         var files = JSON.parse(text);
-        for (var i = 0, file; file = files[i]; i++)
-          db.files_get(file.hash, function(fileentry) {
+        for(var i = 0, file; file = files[i]; i++)
+          db.files_get(file.hash, function(fileentry)
+          {
             var blob = blobs.getChildByName(file.hash);
 
-            function fileentry_update(file) {
+            function fileentry_update(file)
+            {
               // Fileentry is completed, do nothing
-              if (fileentry.bitmap == undefined) return;
+              if(fileentry.bitmap == undefined)
+                return;
 
               // Fileentry is not completed, update it
               var chunks = fileentry.bitmap.indexes();
 
-              for (var i = 0, chunk; chunk = chunks[i]; i++)
-                if (blob.bitmap == undefined || blob.bitmap.get(chunk)) {
+              for(var i = 0, chunk; chunk = chunks[i]; i++)
+                if(blob.bitmap == undefined || blob.bitmap.get(chunk))
+                {
                   var reader = new FileReader();
-                  reader.onerror = function(evt) {
+                  reader.onerror = function(evt)
+                  {
                     console.error('CacheBackup.import(' + file.hash + ', ' + chunk + ") = '" + evt.target.result + "'");
                   };
-                  reader.onload = function(evt) {
-                    var data = evt.target.result;
+                  reader.onload = function(event)
+                  {
+                    var data = event.target.result;
 
-                    peersManager.updateFile(fileentry, chunk, data);
+                    filesManager.updateFile(fileentry, chunk, data);
                   };
 
                   var start = chunk * chunksize;
                   var stop = start + chunksize;
 
-                  blob.getBlob(zip.getMimeType(file.name), function(blob) {
+                  blob.getBlob(zip.getMimeType(file.name), function(blob)
+                  {
                     var filesize = parseInt(blob.size);
-                    if (stop > filesize) stop = filesize;
+                    if(stop > filesize)
+                       stop = filesize;
 
                     reader.readAsBinaryString(blob.slice(start, stop));
                   });
@@ -120,12 +131,12 @@ function CacheBackup(db, peersManager) {
                   {
                     var pending_chunks = fileentry.bitmap.indexes(false).length;
 
-                    peersManager.transfer_update(fileentry, pending_chunks);
+                    filesManager.transfer_update(fileentry, pending_chunks);
                   }
 
                 // File was completed, notify finished
                   else
-                    peersManager.transfer_end(fileentry);
+                    filesManager.transfer_end(fileentry);
                 });
               });
             }
@@ -135,7 +146,8 @@ function CacheBackup(db, peersManager) {
               fileentry_update(file);
 
           // Fileentry don't exists on cache, add it
-            else fileentry_add(file);
+            else
+              fileentry_add(file);
           });
       });
     }, onerror);
