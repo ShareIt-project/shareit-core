@@ -86,16 +86,15 @@ webp2p.Webp2pLocal = function()
 
 
     peersManager.addEventListener('error.noPeers', forwardEvent);
+    peersManager.addEventListener('uid', forwardEvent);
 
     filesManager.addEventListener('file.added',   forwardEvent);
     filesManager.addEventListener('file.deleted', forwardEvent);
 
-    peersManager.addEventListener('sharedpoints.update', forwardEvent);
+    filesManager.addEventListener('sharedpoints.update', forwardEvent);
 
-    peersManager.addEventListener('transfer.begin',  forwardEvent);
-    peersManager.addEventListener('transfer.end',    forwardEvent);
-    peersManager.addEventListener('transfer.update', forwardEvent);
-
-    peersManager.addEventListener('uid', forwardEvent);
+    filesManager.addEventListener('transfer.begin',  forwardEvent);
+    filesManager.addEventListener('transfer.end',    forwardEvent);
+    filesManager.addEventListener('transfer.update', forwardEvent);
   })
 }
