@@ -5,10 +5,11 @@ var chunksize = 65536;
  * Addapt a transport layer to be used as a peer
  * @param transport
  * @param {IDBdatabase} db WebP2P database.
- * @param {PeersManager} peersManager {PeersManager} object.
+ * @param {FilesManager} filesManager {FilesManager} object.
  */
 
-function Transport_Peer_init(transport, db, peersManager) {
+function Transport_Peer_init(transport, db, filesManager)
+{
   /**
    * Check if we already have the file and set it references to our copy
    * @param {Fileentry} fileentry {Fileentry} to be checked.
@@ -152,8 +153,9 @@ function Transport_Peer_init(transport, db, peersManager) {
 
     data = byteArray;
 
-    db.files_get(hash, function(fileentry) {
-      peersManager.updateFile(fileentry, chunk, data);
+    db.files_get(hash, function(fileentry)
+    {
+      filesManager.updateFile(fileentry, chunk, data);
     });
   });
 
@@ -162,7 +164,8 @@ function Transport_Peer_init(transport, db, peersManager) {
      * @param {Fileentry} Fileentry of the file to be requested.
      * @param {Number} chunk Chunk of the file to be requested.
      */
-  transport.transfer_query = function(fileentry, chunk) {
+  transport.transfer_query = function(fileentry, chunk)
+  {
     transport.emit('transfer.query', fileentry.hash, chunk);
   };
 }

@@ -81,7 +81,7 @@ webp2p.Webp2pLocal = function()
      */
     self.transfer_begin = function(fileentry)
     {
-      peersManager.transfer_begin(fileentry)
+      filesManager.transfer_begin(fileentry)
     }
 
 
