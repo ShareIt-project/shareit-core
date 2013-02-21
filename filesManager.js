@@ -28,7 +28,7 @@ function FilesManager(db, peersManager)
 
       channel._send_file_deleted(fileentry);
     });
-  }
+  })
 
 
   /**

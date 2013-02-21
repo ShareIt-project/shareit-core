@@ -19,9 +19,9 @@ var shareit =
         i;
     for (i = 0; i < scripts.length; i++) {
       var src = scripts.item(i).src;
-      var regex = /shareit\/index\.js$/;
+      var regex = /shareit-core\/index\.js$/;
       if (src && src.match(regex)) {
-        path = src.replace(regex, 'shareit/');
+        path = src.replace(regex, 'shareit-core/');
         break;
       }
     }
