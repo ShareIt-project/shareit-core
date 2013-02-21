@@ -41,6 +41,7 @@ shareit.load(
 ['bitmap',
  'cacheBackup',
  'db',
+ 'filesManager',
  'utils',
  'webp2pLocal',
  'webp2pWorker',
