@@ -1,4 +1,4 @@
-var webp2p = new webp2p.Webp2pLocal(db)
+var webp2p = new webp2p.Webp2pLocal()
 
 
 self.onmessage = function(event)

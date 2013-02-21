@@ -1,17 +1,8 @@
-webp2p.Webp2pWorker = function(db)
+webp2p.Webp2pWorker = function()
 {
   EventTarget.call(this);
 
   var self = this
-
-
-  var peersManager = new PeersManager(db)
-
-  // Init cache backup system
-  var cacheBackup = new CacheBackup(db, peersManager)
-
-  // Init sharedpoints manager
-  var sharedpointsManager = new SharedpointsManager(db, peersManager)
 
 
   this.cacheBackup_export = function(onfinish, onprogress, onerror)
@@ -81,8 +72,8 @@ webp2p.Webp2pWorker = function(db)
 
   peersManager.addEventListener('error.noPeers', forwardEvent);
 
-  peersManager.addEventListener('file.added',   forwardEvent);
-  peersManager.addEventListener('file.deleted', forwardEvent);
+  filesManager.addEventListener('file.added',   forwardEvent);
+  filesManager.addEventListener('file.deleted', forwardEvent);
 
   peersManager.addEventListener('sharedpoints.update', forwardEvent);
 

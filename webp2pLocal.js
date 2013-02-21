@@ -11,11 +11,11 @@ webp2p.Webp2pLocal = function()
   }
 
 
+  var peersManager = new PeersManager()
+
   // Init database
   DB_init(function(db)
   {
-    var peersManager = new PeersManager(db)
-
     var filesManager = new FilesManager(db, peersManager)
 
     // Init cache backup system
@@ -87,8 +87,8 @@ webp2p.Webp2pLocal = function()
 
     peersManager.addEventListener('error.noPeers', forwardEvent);
 
-    peersManager.addEventListener('file.added',   forwardEvent);
-    peersManager.addEventListener('file.deleted', forwardEvent);
+    filesManager.addEventListener('file.added',   forwardEvent);
+    filesManager.addEventListener('file.deleted', forwardEvent);
 
     peersManager.addEventListener('sharedpoints.update', forwardEvent);
 
