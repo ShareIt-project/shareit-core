@@ -5,12 +5,6 @@ webp2p.Webp2pLocal = function()
   var self = this
 
 
-  function forwardEvent(event)
-  {
-    self.dispatchEvent(event);
-  }
-
-
   var peersManager = new PeersManager()
 
   // Init database
@@ -30,18 +24,17 @@ webp2p.Webp2pLocal = function()
       cacheBackup.export(onfinish, onprogress, onerror)
     }
 
-    self.cacheBackup_import = function(blob, onerror)
+    self.cacheBackup_import = function(blob, cb)
     {
-      cacheBackup.import(blob, onerror)
+      cacheBackup.import(blob, cb)
     }
 
     /**
      * Connects to another peer based on its UID. If we are already connected,
      * it does nothing.
      * @param {UUID} uid Identifier of the other peer to be connected.
-     * @param {Function} onsuccess Callback called when the connection was done.
-     * @param {Function} onerror Callback called when connection was not possible.
      * @param {MessageChannel} incomingChannel Optional channel where to
+     * @param {Function} cb Callback.
      * send the offer. If not defined send it to all connected peers.
      */
     self.connectTo = function(uid, incomingChannel, cb)
@@ -83,6 +76,11 @@ webp2p.Webp2pLocal = function()
       filesManager.transfer_begin(fileentry)
     }
 
+
+    function forwardEvent(event)
+    {
+      self.dispatchEvent(event);
+    }
 
     peersManager.addEventListener('error.noPeers', forwardEvent);
     peersManager.addEventListener('uid', forwardEvent);

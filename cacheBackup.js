@@ -53,7 +53,7 @@ function CacheBackup(db, filesManager)
     });
   };
 
-  this.import = function(blob, onerror)
+  this.import = function(blob, cb)
   {
     var fs = new zip.fs.FS();
     fs.importBlob(blob, function()
@@ -150,6 +150,6 @@ function CacheBackup(db, filesManager)
               fileentry_add(file);
           });
       });
-    }, onerror);
+    }, cb);
   };
 }

@@ -55,17 +55,17 @@ webp2p.Webp2pWorker = function(channel)
   {
   }
 
-  this.cacheBackup_import = function(blob, onerror)
+  this.cacheBackup_import = function(blob, cb)
   {
+    call('cacheBackup_import', blob, cb)
   }
 
   /**
    * Connects to another peer based on its UID. If we are already connected,
    * it does nothing.
    * @param {UUID} uid Identifier of the other peer to be connected.
-   * @param {Function} onsuccess Callback called when the connection was done.
-   * @param {Function} onerror Callback called when connection was not possible.
    * @param {MessageChannel} incomingChannel Optional channel where to
+     * @param {Function} cb Callback.
    * send the offer. If not defined send it to all connected peers.
    */
   this.connectTo = function(uid, incomingChannel, cb)
