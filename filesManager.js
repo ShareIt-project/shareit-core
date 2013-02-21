@@ -4,7 +4,32 @@
  */
 function FilesManager(db, peersManager)
 {
+  EventTarget.call(this);
+
   var self = this;
+
+
+  peersManager.addEventListener('channel', function(event)
+  {
+    var channel = event.channel
+
+    Transport_Host_init(channel, db);
+    Transport_Peer_init(channel, db, peersManager);
+
+    peersManager.addEventListener('file.added', function(event)
+    {
+      var fileentry = event.data[0];
+
+      channel._send_file_added(fileentry);
+    });
+    peersManager.addEventListener('file.deleted', function(event)
+    {
+      var fileentry = event.data[0];
+
+      channel._send_file_deleted(fileentry);
+    });
+  }
+
 
   /**
    * Start the download of a file
