@@ -44,9 +44,9 @@ webp2p.Webp2pLocal = function()
      * @param {MessageChannel} incomingChannel Optional channel where to
      * send the offer. If not defined send it to all connected peers.
      */
-    self.connectTo = function(uid, onsuccess, onerror, incomingChannel)
+    self.connectTo = function(uid, incomingChannel, cb)
     {
-      peersManager.connectTo(uid, onsuccess, onerror, incomingChannel)
+      peersManager.connectTo(uid, incomingChannel, cb)
     }
 
     self.files_downloading = function(onsuccess)
@@ -64,10 +64,9 @@ webp2p.Webp2pLocal = function()
       onsuccess(Object.keys(peersManager.getChannels()).length);
     }
 
-    self.sharedpointsManager_addSharedpoint_Folder = function(files, onsuccess,
-                                                              onerror)
+    self.sharedpointsManager_addSharedpoint_Folder = function(files, cb)
     {
-      sharedpointsManager.addSharedpoint_Folder(files, onsuccess, onerror)
+      sharedpointsManager.addSharedpoint_Folder(files, cb)
     }
 
     self.sharedpointsManager_getSharedpoints = function(onsuccess)

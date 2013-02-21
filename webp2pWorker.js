@@ -1,18 +1,62 @@
-webp2p.Webp2pWorker = function()
+// Based on code from https://github.com/jaredhanson/jsonrpc-postmessage
+
+webp2p.Webp2pWorker = function(channel)
 {
   EventTarget.call(this);
 
   var self = this
 
+  var timeout = 5000
+  var handlers = {}
+  var requestID = 1
+
+
+  channel.onmessage = function(event)
+  {
+    var id = event.id
+    if(id === null || id === undefined) return
+
+    var handler = handlers[id];
+    if(handler)
+      handler.call(self, event.error, event.result);
+
+    delete handlers[id];
+  }
+
+
+  function call(method)
+  {
+    var args = Array.prototype.slice.call(arguments, 1)
+    var sb = (args.length && typeof args[args.length - 1] == 'function') ? args.pop() : null;
+
+    var request =
+    {
+      id: requestID++,
+      method: method,
+      args: args
+    }
+
+    handlers[request.id] = cb
+
+    setTimeout(function()
+    {
+      var handler = handlers[request.id];
+      if(handler)
+        handler.call(self, new Error('Timed Out'));
+
+      delete handlers[request.id];
+    }, timeout);
+
+    channel.send(request);
+  }
+
 
   this.cacheBackup_export = function(onfinish, onprogress, onerror)
   {
-    cacheBackup.export(onfinish, onprogress, onerror)
   }
 
   this.cacheBackup_import = function(blob, onerror)
   {
-    cacheBackup.export(blob, onerror)
   }
 
   /**
@@ -24,35 +68,29 @@ webp2p.Webp2pWorker = function()
    * @param {MessageChannel} incomingChannel Optional channel where to
    * send the offer. If not defined send it to all connected peers.
    */
-  this.connectTo = function(uid, onsuccess, onerror, incomingChannel)
+  this.connectTo = function(uid, incomingChannel, cb)
   {
-    peersManager.connectTo(uid, onsuccess, onerror, incomingChannel)
+    call('connectTo', uid, incomingChannel, cb)
   }
 
   this.files_downloading = function(onsuccess)
   {
-    peersManager.files_downloading(onsuccess)
   }
 
   this.files_sharing = function(onsuccess)
   {
-    peersManager.files_sharing(onsuccess)
   }
 
   this.numPeers = function(onsuccess)
   {
-    onsuccess(Object.keys(peersManager.getChannels()).length);
   }
 
-  this.sharedpointsManager_addSharedpoint_Folder = function(files, onsuccess,
-                                                            onerror)
+  this.sharedpointsManager_addSharedpoint_Folder = function(files, cb)
   {
-    sharedpointsManager.addSharedpoint_Folder(files, onsuccess, onerror)
   }
 
   this.sharedpointsManager_getSharedpoints = function(onsuccess)
   {
-    sharedpointsManager.getSharedpoints(onsuccess)
   }
 
   /**
@@ -61,7 +99,6 @@ webp2p.Webp2pWorker = function()
    */
   this.transfer_begin = function(fileentry)
   {
-    peersManager.transfer_begin(fileentry)
   }
 
 
