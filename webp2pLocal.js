@@ -51,12 +51,12 @@ webp2p.Webp2pLocal = function()
 
     self.files_downloading = function(onsuccess)
     {
-      peersManager.files_downloading(onsuccess)
+      filesManager.files_downloading(onsuccess)
     }
 
     self.files_sharing = function(onsuccess)
     {
-      peersManager.files_sharing(onsuccess)
+      filesManager.files_sharing(onsuccess)
     }
 
     self.numPeers = function(onsuccess)
