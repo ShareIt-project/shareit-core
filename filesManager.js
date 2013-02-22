@@ -264,7 +264,7 @@ function FilesManager(db, peersManager)
     });
   };
 
-  this.files_sharing = function(onsuccess)
+  this.files_sharing = function(cb)
   {
     db.files_getAll(null, function(filelist)
     {
@@ -275,7 +275,7 @@ function FilesManager(db, peersManager)
           sharing.push(fileentry)
 
       // Update Sharing files list
-      onsuccess(sharing)
+      cb(null, sharing)
     })
   }
 }
