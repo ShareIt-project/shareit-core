@@ -1,6 +1,6 @@
 // Based on code from https://github.com/jaredhanson/jsonrpc-postmessage
 
-webp2p.Webp2pRemote = function(channel)
+webp2p.Webp2pRemote = function(channel, onsuccess)
 {
   EventTarget.call(this);
 
@@ -117,4 +117,7 @@ webp2p.Webp2pRemote = function(channel)
   {
     call('transfer_begin', fileentry)
   }
+
+  if(onsuccess)
+    onsuccess(this)
 }

@@ -1,4 +1,4 @@
-webp2p.Webp2pLocal = function()
+webp2p.Webp2pLocal = function(onsuccess)
 {
   EventTarget.call(this);
 
@@ -94,5 +94,8 @@ webp2p.Webp2pLocal = function()
     filesManager.addEventListener('transfer.begin',  forwardEvent);
     filesManager.addEventListener('transfer.end',    forwardEvent);
     filesManager.addEventListener('transfer.update', forwardEvent);
+
+    if(onsuccess)
+      onsuccess(self)
   })
 }

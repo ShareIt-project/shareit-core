@@ -22,7 +22,10 @@ function expose(name, service)
   }
 }
 
-expose(new webp2p.Webp2pLocal())
+var webp2p = new webp2p.Webp2pLocal(function(webp2p)
+{
+  expose(webp2p)
+})
 
 
 self.onmessage = function(event)
