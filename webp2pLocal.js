@@ -42,9 +42,9 @@ webp2p.Webp2pLocal = function()
       peersManager.connectTo(uid, incomingChannel, cb)
     }
 
-    self.files_downloading = function(onsuccess)
+    self.files_downloading = function(cb)
     {
-      filesManager.files_downloading(onsuccess)
+      filesManager.files_downloading(cb)
     }
 
     self.files_sharing = function(onsuccess)

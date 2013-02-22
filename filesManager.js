@@ -249,7 +249,7 @@ function FilesManager(db, peersManager)
   };
 
 
-  this.files_downloading = function(onsuccess)
+  this.files_downloading = function(cb)
   {
     db.files_getAll(null, function(filelist)
     {
@@ -259,8 +259,8 @@ function FilesManager(db, peersManager)
         if(fileentry.bitmap)
           downloading.push(fileentry);
 
-        // Update Downloading files list
-        onsuccess(downloading);
+      // Update Downloading files list
+      cb(null, downloading);
     });
   };
 

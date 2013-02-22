@@ -73,8 +73,9 @@ webp2p.Webp2pWorker = function(channel)
     call('connectTo', uid, incomingChannel, cb)
   }
 
-  this.files_downloading = function(onsuccess)
+  this.files_downloading = function(cb)
   {
+    call('files_downloading', incomingChannel, cb)
   }
 
   this.files_sharing = function(onsuccess)
