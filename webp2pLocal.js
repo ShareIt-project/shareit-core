@@ -5,6 +5,12 @@ webp2p.Webp2pLocal = function()
   var self = this
 
 
+  function forwardEvent(event)
+  {
+    self.dispatchEvent(event);
+  }
+
+
   var peersManager = new PeersManager()
 
   // Init database
@@ -76,11 +82,6 @@ webp2p.Webp2pLocal = function()
       filesManager.transfer_begin(fileentry)
     }
 
-
-    function forwardEvent(event)
-    {
-      self.dispatchEvent(event);
-    }
 
     peersManager.addEventListener('error.noPeers', forwardEvent);
     peersManager.addEventListener('uid', forwardEvent);

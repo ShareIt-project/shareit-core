@@ -6,6 +6,13 @@ webp2p.Webp2pRemote = function(channel)
 
   var self = this
 
+
+  function forwardEvent(event)
+  {
+    self.dispatchEvent(event);
+  }
+
+
   var timeout = 5000
   var handlers = {}
   var requestID = 1
@@ -14,7 +21,11 @@ webp2p.Webp2pRemote = function(channel)
   channel.onmessage = function(event)
   {
     var id = event.id
-    if(id === null || id === undefined) return
+    if(id === null || id === undefined)
+    {
+      forwardEvent(event)
+      return
+    }
 
     var handler = handlers[id];
     if(handler)
@@ -106,22 +117,4 @@ webp2p.Webp2pRemote = function(channel)
   {
     call('transfer_begin', fileentry)
   }
-
-
-  function forwardEvent(event)
-  {
-    self.dispatchEvent(event);
-  }
-
-  peersManager.addEventListener('error.noPeers', forwardEvent);
-  peersManager.addEventListener('uid', forwardEvent);
-
-  filesManager.addEventListener('file.added',   forwardEvent);
-  filesManager.addEventListener('file.deleted', forwardEvent);
-
-  filesManager.addEventListener('sharedpoints.update', forwardEvent);
-
-  filesManager.addEventListener('transfer.begin', forwardEvent);
-  filesManager.addEventListener('transfer.end', forwardEvent);
-  filesManager.addEventListener('transfer.update', forwardEvent);
 }
