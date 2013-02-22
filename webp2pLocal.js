@@ -62,9 +62,9 @@ webp2p.Webp2pLocal = function()
       sharedpointsManager.addSharedpoint_Folder(files, cb)
     }
 
-    self.sharedpointsManager_getSharedpoints = function(onsuccess)
+    self.sharedpointsManager_getSharedpoints = function(cb)
     {
-      sharedpointsManager.getSharedpoints(onsuccess)
+      sharedpointsManager.getSharedpoints(cb)
     }
 
     /**

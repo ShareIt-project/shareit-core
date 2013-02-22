@@ -90,10 +90,12 @@ webp2p.Webp2pRemote = function(channel)
 
   this.sharedpointsManager_addSharedpoint_Folder = function(files, cb)
   {
+    call('sharedpointsManager_addSharedpoint_Folder', files, cb)
   }
 
-  this.sharedpointsManager_getSharedpoints = function(onsuccess)
+  this.sharedpointsManager_getSharedpoints = function(cb)
   {
+    call('sharedpointsManager_getSharedpoints', cb)
   }
 
   /**
