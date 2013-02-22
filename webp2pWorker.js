@@ -80,10 +80,12 @@ webp2p.Webp2pWorker = function(channel)
 
   this.files_sharing = function(cb)
   {
+    call('files_sharing', cb)
   }
 
-  this.numPeers = function(onsuccess)
+  this.numPeers = function(cb)
   {
+    call('numPeers', cb)
   }
 
   this.sharedpointsManager_addSharedpoint_Folder = function(files, cb)
