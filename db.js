@@ -53,22 +53,23 @@ function DB_init(onsuccess)
      * @param {Function} onerror Callback called when object was not
      * able to be added.
      */
-    db._add = function(objectStore, data, onsuccess, onerror)
+    db._add = function(objectStore, data, callback)
     {
       var transaction = db.transaction(objectStore, 'readwrite');
       var objectStore = transaction.objectStore(objectStore);
 
       var request = objectStore.add(data);
-      if(onsuccess != undefined)
+      if(callback)
+      {
         request.onsuccess = function(event)
         {
-          onsuccess(request.result);
+          callback(null, request.result);
         };
-      if(onerror != undefined)
         request.onerror = function(event)
         {
-          onerror(event.target.errorCode);
+          callback(event.target.errorCode);
         };
+      }
     };
 
     /**
@@ -81,22 +82,23 @@ function DB_init(onsuccess)
      * @param {Function} onerror Callback called when key was not able
      * to be deleted.
      */
-    db._delete = function(objectStore, key, onsuccess, onerror)
+    db._delete = function(objectStore, key, callback)
     {
       var transaction = db.transaction(objectStore, 'readwrite');
       var objectStore = transaction.objectStore(objectStore);
 
       var request = objectStore.delete(key);
-      if(onsuccess != undefined)
+      if(callback)
+      {
         request.onsuccess = function(event)
         {
-          onsuccess(request.result);
+          callback(null, request.result);
         };
-      if(onerror != undefined)
         request.onerror = function(event)
         {
-          onerror(event.target.errorCode);
+          callback(event.target.errorCode);
         };
+      }
     };
 
     /**
@@ -109,21 +111,23 @@ function DB_init(onsuccess)
      * @param {Function} onerror Callback called when object was not
      * able to be gotten.
      */
-    db._get = function(objectStore, key, onsuccess, onerror)
+    db._get = function(objectStore, key, callback)
     {
       var transaction = db.transaction(objectStore);
       var objectStore = transaction.objectStore(objectStore);
 
       var request = objectStore.get(key);
-      request.onsuccess = function(event)
+      if(callback)
       {
-        onsuccess(request.result);
-      };
-      if(onerror != undefined)
+        request.onsuccess = function(event)
+        {
+          callback(null, request.result);
+        };
         request.onerror = function(event)
         {
-          onerror(event.target.errorCode);
+          callback(event.target.errorCode);
         };
+      }
     };
 
     /**
@@ -135,7 +139,7 @@ function DB_init(onsuccess)
      * @param {Function} onerror Callback called when object were not
      * able to be gotten.
      */
-    db._getAll = function(objectStore, range, onsuccess, onerror)
+    db._getAll = function(objectStore, range, callback)
     {
       var result = [];
 
@@ -149,17 +153,15 @@ function DB_init(onsuccess)
         if(cursor)
         {
           result.push(cursor.value);
-          cursor.
-              continue ();
+          cursor.continue();
         }
         else
-          onsuccess(result);
+          callback(null, result);
       };
-      if(onerror != undefined)
-        request.onerror = function(event)
-        {
-          onerror(event.target.errorCode);
-        };
+      request.onerror = function(event)
+      {
+        callback(event.target.errorCode);
+      };
     };
 
     /**
@@ -171,22 +173,23 @@ function DB_init(onsuccess)
      * @param {Function} onerror Callback called when object was not
      * able to be updated or added.
      */
-    db._put = function(objectStore, data, onsuccess, onerror)
+    db._put = function(objectStore, data, callback)
     {
       var transaction = db.transaction(objectStore, 'readwrite');
       var objectStore = transaction.objectStore(objectStore);
 
       var request = objectStore.put(data);
-      if(onsuccess != undefined)
+      if(callback)
+      {
         request.onsuccess = function(event)
         {
-          onsuccess(request.result);
+          callback(null, request.result);
         };
-      if(onerror != undefined)
         request.onerror = function(event)
         {
-          onerror(event.target.errorCode);
+          callback(event.target.errorCode);
         };
+      }
     };
 
     /**
@@ -197,9 +200,9 @@ function DB_init(onsuccess)
      * @param {Function} onerror Callback called when the {Sharedpoint}
      * was not able to be added.
      */
-    db.sharepoints_add = function(sharedpoint, onsuccess, onerror)
+    db.sharepoints_add = function(sharedpoint, callback)
     {
-      db._add('sharepoints', sharedpoint, onsuccess, onerror);
+      db._add('sharepoints', sharedpoint, callback);
     };
 
     /**
@@ -210,9 +213,9 @@ function DB_init(onsuccess)
      * @param {Function} onerror Callback called when the {Sharedpoint}
      * was not able to be deleted.
      */
-    db.sharepoints_delete = function(key, onsuccess, onerror)
+    db.sharepoints_delete = function(key, callback)
     {
-      db._delete('sharepoints', key, onsuccess, onerror);
+      db._delete('sharepoints', key, callback);
     };
 
     /**
@@ -223,9 +226,9 @@ function DB_init(onsuccess)
      * @param {Function} onerror Callback called when the {Sharedpoint}
      * was not able to be gotten.
      */
-    db.sharepoints_get = function(key, onsuccess, onerror)
+    db.sharepoints_get = function(key, callback)
     {
-      db._get('sharepoints', key, onsuccess, onerror);
+      db._get('sharepoints', key, callback);
     };
 
     /**
@@ -236,9 +239,9 @@ function DB_init(onsuccess)
      * @param {Function} onerror Callback called when the {Sharedpoint}s
      * were not able to be gotten.
      */
-    db.sharepoints_getAll = function(range, onsuccess, onerror)
+    db.sharepoints_getAll = function(range, callback)
     {
-      db._getAll('sharepoints', range, onsuccess, onerror);
+      db._getAll('sharepoints', range, callback);
     };
 
     /**
@@ -250,9 +253,9 @@ function DB_init(onsuccess)
      * @param {Function} onerror Callback called when the {Sharedpoint}
      * was not able to be updated or added.
      */
-    db.sharepoints_put = function(sharedpoint, onsuccess, onerror)
+    db.sharepoints_put = function(sharedpoint, callback)
     {
-      db._put('sharepoints', sharedpoint, onsuccess, onerror);
+      db._put('sharepoints', sharedpoint, callback);
     };
 
     /**
@@ -263,9 +266,9 @@ function DB_init(onsuccess)
      * @param {Function} onerror Callback called when the {Fileentry}
      * was not able to be added.
      */
-    db.files_add = function(fileentry, onsuccess, onerror)
+    db.files_add = function(fileentry, callback)
     {
-      db._add('files', fileentry, onsuccess, onerror);
+      db._add('files', fileentry, callback);
     };
 
     /**
@@ -276,9 +279,9 @@ function DB_init(onsuccess)
      * @param {Function} onerror Callback called when the {Fileentry}
      * was not able to be deleted.
      */
-    db.files_delete = function(key, onsuccess, onerror)
+    db.files_delete = function(key, callback)
     {
-      db._delete('files', key, onsuccess, onerror);
+      db._delete('files', key, callback);
     };
 
     /**
@@ -289,9 +292,9 @@ function DB_init(onsuccess)
      * @param {Function} onerror Callback called when the {Fileentry}
      * was not able to be gotten.
      */
-    db.files_get = function(key, onsuccess, onerror)
+    db.files_get = function(key, callback)
     {
-      db._get('files', key, onsuccess, onerror);
+      db._get('files', key, callback);
     };
 
     /**
@@ -302,9 +305,9 @@ function DB_init(onsuccess)
      * @param {Function} onerror Callback called when the {Fileentry}
      * was not able to be gotten.
      */
-    db.files_getAll = function(range, onsuccess, onerror)
+    db.files_getAll = function(range, callback)
     {
-      db._getAll('files', range, onsuccess, onerror);
+      db._getAll('files', range, callback);
     };
 
     /**
@@ -315,9 +318,9 @@ function DB_init(onsuccess)
      * @param {Function} onerror Callback called when the {Fileentry}
      * was not able to be updated or added.
      */
-    db.files_put = function(fileentry, onsuccess, onerror)
+    db.files_put = function(fileentry, callback)
     {
-      db._put('files', fileentry, onsuccess, onerror);
+      db._put('files', fileentry, callback);
     };
 
     if(onsuccess)
