@@ -6,7 +6,7 @@
  * well... the data persistence lacks about some functionality... :-P
  * @author piranna
  */
-window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
+indexedDB = indexedDB || webkitIndexedDB || mozIndexedDB || msIndexedDB;
 
 
 /**
@@ -213,8 +213,8 @@ function IdbJS_install()
 	}
 
 
-    window.indexedDB._dbs = {}
-    window.indexedDB.open = function(name, version)
+    indexedDB._dbs = {}
+    indexedDB.open = function(name, version)
 	{
 	  this._dbs[name] = this._dbs[name] || new IDBDatabase()
 

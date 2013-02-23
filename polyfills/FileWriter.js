@@ -5,12 +5,12 @@
 
 (function(module){
 
-if(window.FileWriter != undefined)
-    return;
+if(module.FileWriter != undefined)
+  return;
 
 Blob.slice = Blob.slice || Blob.webkitSlice || Blob.mozSlice
 if(Blob.slice != undefined)
-    alert("It won't work in your browser. Please use Chrome or Firefox.");
+  alert("It won't work in your browser. Please use Chrome or Firefox.");
 
 /**
  * Interface to writing a Blob/File.
@@ -21,7 +21,7 @@ if(Blob.slice != undefined)
  * @param {Blob} blob The Blob associated with this writer.
  * @constructor
  */
-FileWriter = function(blob)
+module.FileWriter = function(blob)
 {
   if(!blob)
     throw Error('Expected blob argument to write.');
@@ -76,7 +76,7 @@ FileWriter = function(blob)
       blob_ = blob_.slice(0, size)
     else
       blob_ = new Blob([blob_, new Uint8Array(size - this.length)],
-                        {"type": blob_.type})
+                       {"type": blob_.type})
   };
 
   /**
@@ -86,7 +86,7 @@ FileWriter = function(blob)
   this.write = function(data)
   {
     if(!data)
-        return;
+      return;
 
     // Call onwritestart if it was defined.
     if(this.onwritestart)
@@ -103,7 +103,7 @@ FileWriter = function(blob)
 
     // Do the "write" --in fact, a full overwrite of the Blob
     blob_ = new Blob([head, new Uint8Array(padding), data, tail],
-                      {"type": blob_.type})
+                     {"type": blob_.type})
 
     // Set writer.position == write.length.
     position_ += data.size;

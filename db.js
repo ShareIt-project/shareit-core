@@ -1,4 +1,4 @@
-window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
+indexedDB = indexedDB || webkitIndexedDB || mozIndexedDB || msIndexedDB;
 
 /**
  * Initializes the database
