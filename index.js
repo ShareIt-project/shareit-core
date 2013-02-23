@@ -44,7 +44,7 @@ shareit.load(
  'filesManager',
  'utils',
  'webp2pLocal',
- 'webp2pWorker',
+ 'webp2pRemote',
 
  'hasher/index',
 
