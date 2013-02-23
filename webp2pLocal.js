@@ -1,3 +1,5 @@
+webp2p = webp2p || {}
+
 webp2p.Webp2pLocal = function(onsuccess)
 {
   EventTarget.call(this);

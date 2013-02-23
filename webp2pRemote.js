@@ -38,7 +38,7 @@ webp2p.Webp2pRemote = function(channel, onsuccess)
   function call(method)
   {
     var args = Array.prototype.slice.call(arguments, 1)
-    var sb = (args.length && typeof args[args.length - 1] == 'function') ? args.pop() : null;
+    var cb = (args.length && typeof args[args.length - 1] == 'function') ? args.pop() : null;
 
     var request =
     {

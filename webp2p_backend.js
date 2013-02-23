@@ -1,5 +1,36 @@
 // Based on code from https://github.com/jaredhanson/jsonrpc-postmessage
 
+importScripts(
+    'bitmap.js',
+    'cacheBackup.js',
+    'db.js',
+    'filesManager.js',
+    'utils.js',
+    'webp2pLocal.js',
+
+    'hasher/index.js',
+
+    'lib/BoolArray.js',
+    'lib/dropbox.min.js',
+
+    'lib/zip.js/deflate.js',
+    'lib/zip.js/inflate.js',
+    'lib/zip.js/zip.js',
+    'lib/zip.js/zip-fs.js',
+    'lib/zip.js/mime-types.js',
+
+    'polyfills/FileWriter.js',
+    'polyfills/IndexedDB-javascript.js',
+
+    'sharedpoints/index.js',
+    'sharedpoints/dropbox.js',
+    'sharedpoints/mega.js',
+
+    'transport/host.js',
+    'transport/peer.js',
+    'transport/search.js');
+
+
 var methods = {}
 
 function expose(name, service)
