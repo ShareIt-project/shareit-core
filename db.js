@@ -5,34 +5,42 @@ window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndex
  * @param {Function} onsuccess Callback called when database is ready.
  */
 
-function DB_init(onsuccess) {
+function DB_init(onsuccess)
+{
   var version = 2;
 
-  function upgradedb(db) {
+  function upgradedb(db)
+  {
     // Create an objectStore to hold information about the share points.
-    db.createObjectStore('sharepoints', {
+    db.createObjectStore('sharepoints',
+    {
       keyPath: 'name'
     });
 
     // Create an objectStore to hold information about the shared files.
     // We're going to use "hash" as our key path because it's guaranteed to
     // be unique.
-    db.createObjectStore('files', {
+    db.createObjectStore('files',
+    {
       keyPath: 'hash'
     });
   }
 
   var request = indexedDB.open('ShareIt', version);
-  request.onerror = function(event) {
+  request.onerror = function(event)
+  {
     alert("Why didn't you allow my web app to use IndexedDB?!");
   };
-  request.onsuccess = function(event) {
+  request.onsuccess = function(event)
+  {
     var db = request.result;
 
     // Hack for old versions of Chrome/Chromium
-    if (version != db.version) {
+    if(version != db.version)
+    {
       var setVrequest = db.setVersion(version);
-      setVrequest.onsuccess = function(e) {
+      setVrequest.onsuccess = function(e)
+      {
         upgradedb(db);
       };
     }
@@ -45,17 +53,22 @@ function DB_init(onsuccess) {
      * @param {Function} onerror Callback called when object was not
      * able to be added.
      */
-    db._add = function(objectStore, data, onsuccess, onerror) {
+    db._add = function(objectStore, data, onsuccess, onerror)
+    {
       var transaction = db.transaction(objectStore, 'readwrite');
       var objectStore = transaction.objectStore(objectStore);
 
       var request = objectStore.add(data);
-      if (onsuccess != undefined) request.onsuccess = function(event) {
-        onsuccess(request.result);
-      };
-      if (onerror != undefined) request.onerror = function(event) {
-        onerror(event.target.errorCode);
-      };
+      if(onsuccess != undefined)
+        request.onsuccess = function(event)
+        {
+          onsuccess(request.result);
+        };
+      if(onerror != undefined)
+        request.onerror = function(event)
+        {
+          onerror(event.target.errorCode);
+        };
     };
 
     /**
@@ -68,17 +81,22 @@ function DB_init(onsuccess) {
      * @param {Function} onerror Callback called when key was not able
      * to be deleted.
      */
-    db._delete = function(objectStore, key, onsuccess, onerror) {
+    db._delete = function(objectStore, key, onsuccess, onerror)
+    {
       var transaction = db.transaction(objectStore, 'readwrite');
       var objectStore = transaction.objectStore(objectStore);
 
       var request = objectStore.delete(key);
-      if (onsuccess != undefined) request.onsuccess = function(event) {
-        onsuccess(request.result);
-      };
-      if (onerror != undefined) request.onerror = function(event) {
-        onerror(event.target.errorCode);
-      };
+      if(onsuccess != undefined)
+        request.onsuccess = function(event)
+        {
+          onsuccess(request.result);
+        };
+      if(onerror != undefined)
+        request.onerror = function(event)
+        {
+          onerror(event.target.errorCode);
+        };
     };
 
     /**
@@ -91,17 +109,21 @@ function DB_init(onsuccess) {
      * @param {Function} onerror Callback called when object was not
      * able to be gotten.
      */
-    db._get = function(objectStore, key, onsuccess, onerror) {
+    db._get = function(objectStore, key, onsuccess, onerror)
+    {
       var transaction = db.transaction(objectStore);
       var objectStore = transaction.objectStore(objectStore);
 
       var request = objectStore.get(key);
-      request.onsuccess = function(event) {
+      request.onsuccess = function(event)
+      {
         onsuccess(request.result);
       };
-      if (onerror != undefined) request.onerror = function(event) {
-        onerror(event.target.errorCode);
-      };
+      if(onerror != undefined)
+        request.onerror = function(event)
+        {
+          onerror(event.target.errorCode);
+        };
     };
 
     /**
@@ -113,24 +135,31 @@ function DB_init(onsuccess) {
      * @param {Function} onerror Callback called when object were not
      * able to be gotten.
      */
-    db._getAll = function(objectStore, range, onsuccess, onerror) {
+    db._getAll = function(objectStore, range, onsuccess, onerror)
+    {
       var result = [];
 
       var transaction = db.transaction(objectStore);
       var objectStore = transaction.objectStore(objectStore);
 
       var request = objectStore.openCursor(range);
-      request.onsuccess = function(event) {
+      request.onsuccess = function(event)
+      {
         var cursor = event.target.result;
-        if (cursor) {
+        if(cursor)
+        {
           result.push(cursor.value);
           cursor.
               continue ();
-        } else onsuccess(result);
+        }
+        else
+          onsuccess(result);
       };
-      if (onerror != undefined) request.onerror = function(event) {
-        onerror(event.target.errorCode);
-      };
+      if(onerror != undefined)
+        request.onerror = function(event)
+        {
+          onerror(event.target.errorCode);
+        };
     };
 
     /**
@@ -142,17 +171,22 @@ function DB_init(onsuccess) {
      * @param {Function} onerror Callback called when object was not
      * able to be updated or added.
      */
-    db._put = function(objectStore, data, onsuccess, onerror) {
+    db._put = function(objectStore, data, onsuccess, onerror)
+    {
       var transaction = db.transaction(objectStore, 'readwrite');
       var objectStore = transaction.objectStore(objectStore);
 
       var request = objectStore.put(data);
-      if (onsuccess != undefined) request.onsuccess = function(event) {
-        onsuccess(request.result);
-      };
-      if (onerror != undefined) request.onerror = function(event) {
-        onerror(event.target.errorCode);
-      };
+      if(onsuccess != undefined)
+        request.onsuccess = function(event)
+        {
+          onsuccess(request.result);
+        };
+      if(onerror != undefined)
+        request.onerror = function(event)
+        {
+          onerror(event.target.errorCode);
+        };
     };
 
     /**
@@ -163,7 +197,8 @@ function DB_init(onsuccess) {
      * @param {Function} onerror Callback called when the {Sharedpoint}
      * was not able to be added.
      */
-    db.sharepoints_add = function(sharedpoint, onsuccess, onerror) {
+    db.sharepoints_add = function(sharedpoint, onsuccess, onerror)
+    {
       db._add('sharepoints', sharedpoint, onsuccess, onerror);
     };
 
@@ -175,7 +210,8 @@ function DB_init(onsuccess) {
      * @param {Function} onerror Callback called when the {Sharedpoint}
      * was not able to be deleted.
      */
-    db.sharepoints_delete = function(key, onsuccess, onerror) {
+    db.sharepoints_delete = function(key, onsuccess, onerror)
+    {
       db._delete('sharepoints', key, onsuccess, onerror);
     };
 
@@ -187,7 +223,8 @@ function DB_init(onsuccess) {
      * @param {Function} onerror Callback called when the {Sharedpoint}
      * was not able to be gotten.
      */
-    db.sharepoints_get = function(key, onsuccess, onerror) {
+    db.sharepoints_get = function(key, onsuccess, onerror)
+    {
       db._get('sharepoints', key, onsuccess, onerror);
     };
 
@@ -199,7 +236,8 @@ function DB_init(onsuccess) {
      * @param {Function} onerror Callback called when the {Sharedpoint}s
      * were not able to be gotten.
      */
-    db.sharepoints_getAll = function(range, onsuccess, onerror) {
+    db.sharepoints_getAll = function(range, onsuccess, onerror)
+    {
       db._getAll('sharepoints', range, onsuccess, onerror);
     };
 
@@ -212,7 +250,8 @@ function DB_init(onsuccess) {
      * @param {Function} onerror Callback called when the {Sharedpoint}
      * was not able to be updated or added.
      */
-    db.sharepoints_put = function(sharedpoint, onsuccess, onerror) {
+    db.sharepoints_put = function(sharedpoint, onsuccess, onerror)
+    {
       db._put('sharepoints', sharedpoint, onsuccess, onerror);
     };
 
@@ -224,7 +263,8 @@ function DB_init(onsuccess) {
      * @param {Function} onerror Callback called when the {Fileentry}
      * was not able to be added.
      */
-    db.files_add = function(fileentry, onsuccess, onerror) {
+    db.files_add = function(fileentry, onsuccess, onerror)
+    {
       db._add('files', fileentry, onsuccess, onerror);
     };
 
@@ -236,7 +276,8 @@ function DB_init(onsuccess) {
      * @param {Function} onerror Callback called when the {Fileentry}
      * was not able to be deleted.
      */
-    db.files_delete = function(key, onsuccess, onerror) {
+    db.files_delete = function(key, onsuccess, onerror)
+    {
       db._delete('files', key, onsuccess, onerror);
     };
 
@@ -248,7 +289,8 @@ function DB_init(onsuccess) {
      * @param {Function} onerror Callback called when the {Fileentry}
      * was not able to be gotten.
      */
-    db.files_get = function(key, onsuccess, onerror) {
+    db.files_get = function(key, onsuccess, onerror)
+    {
       db._get('files', key, onsuccess, onerror);
     };
 
@@ -260,7 +302,8 @@ function DB_init(onsuccess) {
      * @param {Function} onerror Callback called when the {Fileentry}
      * was not able to be gotten.
      */
-    db.files_getAll = function(range, onsuccess, onerror) {
+    db.files_getAll = function(range, onsuccess, onerror)
+    {
       db._getAll('files', range, onsuccess, onerror);
     };
 
@@ -272,13 +315,16 @@ function DB_init(onsuccess) {
      * @param {Function} onerror Callback called when the {Fileentry}
      * was not able to be updated or added.
      */
-    db.files_put = function(fileentry, onsuccess, onerror) {
+    db.files_put = function(fileentry, onsuccess, onerror)
+    {
       db._put('files', fileentry, onsuccess, onerror);
     };
 
-    if (onsuccess) onsuccess(db);
+    if(onsuccess)
+       onsuccess(db);
   };
-  request.onupgradeneeded = function(event) {
+  request.onupgradeneeded = function(event)
+  {
     upgradedb(event.target.result);
   };
 }
