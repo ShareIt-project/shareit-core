@@ -3,7 +3,14 @@ function CacheBackup(db, filesManager)
   zip.workerScriptsPath = 'js/webp2p/lib/zip.js/';
 
   this.export = function(onfinish, onprogress, onerror) {
-    db.files_getAll(null, function(fileslist) {
+    db.files_getAll(null, function(error, fileslist)
+    {
+      if(error)
+      {
+        console.error(error)
+        return
+      }
+
       // Create a new filesystem inside the Zip file
       var fs = new zip.fs.FS();
 
@@ -68,8 +75,14 @@ function CacheBackup(db, filesManager)
         // Extract blobs data and add it to cache
         var files = JSON.parse(text);
         for(var i = 0, file; file = files[i]; i++)
-          db.files_get(file.hash, function(fileentry)
+          db.files_get(file.hash, function(error, fileentry)
           {
+            if(error)
+            {
+              console.error(error)
+              return
+            }
+
             var blob = blobs.getChildByName(file.hash);
 
             function fileentry_update(file)
@@ -124,17 +137,20 @@ function CacheBackup(db, filesManager)
                 if(file.bitmap)
                   fileentry.bitmap = file.bitmap;
 
-                db.files_add(fileentry, function()
+                db.files_add(fileentry, function(error, fileentry)
                 {
+                  if(error)
+                    console.error(error)
+
                   // File was not completed, notify update
-                  if(file.bitmap)
+                  else if(file.bitmap)
                   {
                     var pending_chunks = fileentry.bitmap.indexes(false).length;
 
                     filesManager.transfer_update(fileentry, pending_chunks);
                   }
 
-                // File was completed, notify finished
+                  // File was completed, notify finished
                   else
                     filesManager.transfer_end(fileentry);
                 });

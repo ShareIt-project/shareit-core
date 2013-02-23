@@ -47,10 +47,11 @@ function Transport_Host_init(transport, db) {
    * Addapt and send to the other peer our list of shared files
    * @param {Array} fileslist Our list of {Fileentry}s.
    */
-  transport._send_files_list = function(fileslist) {
+  transport._send_files_list = function(fileslist)
+  {
     var files_send = [];
 
-    for (var i = 0, fileentry; fileentry = fileslist[i]; i++)
+    for(var i = 0, fileentry; fileentry = fileslist[i]; i++)
       files_send.push(generateFileObject(fileentry));
 
     transport.emit('fileslist.send', files_send);
@@ -82,10 +83,18 @@ function Transport_Host_init(transport, db) {
   /**
    * Catch request for our files list
    */
-  transport.addEventListener('fileslist.query', function(event) {
+  transport.addEventListener('fileslist.query', function(event)
+  {
     var flags = event.data[0];
 
-    db.files_getAll(null, transport._send_files_list);
+    db.files_getAll(null, function(error, fileslist)
+    {
+      if(error)
+        console.error(error)
+
+      else
+        transport._send_files_list(fileslist)
+    });
 
     send_updates = flags & SEND_UPDATES;
   });
@@ -116,11 +125,19 @@ function Transport_Host_init(transport, db) {
     var start = chunk * chunksize;
     var stop = start + chunksize;
 
-    db.files_get(hash, function(fileentry) {
+    db.files_get(hash, function(error, fileentry)
+    {
+      if(error)
+      {
+        console.error(error)
+        return
+      }
+
       var blob = fileentry.file || fileentry.blob;
 
       var filesize = parseInt(blob.size);
-      if (stop > filesize) stop = filesize;
+      if(stop > filesize)
+         stop = filesize;
 
       reader.readAsBinaryString(blob.slice(start, stop));
     });

@@ -78,10 +78,14 @@ function FilesManager(db, peersManager)
     if(!fileentry.size)
     {
       // Insert new empty "file" inside IndexedDB
-      db.files_add(fileentry, function()
+      db.files_add(fileentry, function(error, fileentry)
       {
-        self.transfer_end(fileentry);
-      }, onerror);
+        if(error)
+          onerror(error)
+
+        else
+          self.transfer_end(fileentry);
+      });
 
       return;
     }
@@ -95,17 +99,23 @@ function FilesManager(db, peersManager)
     fileentry.bitmap = new Bitmap(chunks);
 
     // Insert new "file" inside IndexedDB
-    db.files_add(fileentry, function()
+    db.files_add(fileentry, function(error, fileentry)
     {
-      var event = document.createEvent("Event");
-          event.initEvent('transfer.begin',true,true);
-          event.data = [fileentry]
+      if(error)
+        onerror(error)
 
-      self.dispatchEvent(event);
+      else
+      {
+        var event = document.createEvent("Event");
+            event.initEvent('transfer.begin',true,true);
+            event.data = [fileentry]
 
-      // Demand data from the begining of the file
-      transfer_query(fileentry);
-    }, onerror);
+        self.dispatchEvent(event);
+
+        // Demand data from the begining of the file
+        transfer_query(fileentry);
+      }
+    });
   };
 
   this.transfer_update = function(fileentry, pending_chunks)
@@ -172,11 +182,17 @@ function FilesManager(db, peersManager)
     {
       // Demand more data from one of the pending chunks after update
       // the fileentry status on the database
-      db.files_put(fileentry, function()
+      db.files_put(fileentry, function(error, fileentry)
       {
-        self.transfer_update(fileentry, pending_chunks);
+        if(error)
+          onerror(error)
 
-        transfer_query(fileentry);
+        else
+        {
+          self.transfer_update(fileentry, pending_chunks);
+
+          transfer_query(fileentry);
+        }
       });
     }
     else
@@ -184,9 +200,13 @@ function FilesManager(db, peersManager)
       // There are no more chunks, set file as fully downloaded
       delete fileentry.bitmap;
 
-      db.files_put(fileentry, function()
+      db.files_put(fileentry, function(error, fileentry)
       {
-        self.transfer_end(fileentry);
+        if(error)
+          onerror(error)
+
+        else
+          self.transfer_end(fileentry);
       });
     }
   };
@@ -205,18 +225,30 @@ function FilesManager(db, peersManager)
     this.dispatchEvent(event);
 
     // Update fileentry sharedpoint size
-    db.sharepoints_get(fileentry.sharedpoint, function(sharedpoint)
+    db.sharepoints_get(fileentry.sharedpoint, function(error, sharedpoint)
     {
-      // Increase sharedpoint shared size
-      sharedpoint.size += fileentry.file.size;
+      if(error)
+        console.error(error)
 
-      db.sharepoints_put(sharedpoint, function()
+      else
       {
-        var event = document.createEvent("Event");
-            event.initEvent('sharedpoints.update',true,true);
+        // Increase sharedpoint shared size
+        sharedpoint.size += fileentry.file.size;
 
-        self.dispatchEvent(event);
-      });
+        db.sharepoints_put(sharedpoint, function(error, sharedpoint)
+        {
+          if(error)
+            console.error(error)
+
+          else
+          {
+            var event = document.createEvent("Event");
+                event.initEvent('sharedpoints.update',true,true);
+
+            self.dispatchEvent(event);
+          }
+        });
+      }
     });
   };
 
@@ -233,49 +265,73 @@ function FilesManager(db, peersManager)
     this.dispatchEvent(event);
 
     // Update fileentry sharedpoint size
-    db.sharepoints_get(fileentry.sharedpoint, function(sharedpoint)
+    db.sharepoints_get(fileentry.sharedpoint, function(error, sharedpoint)
     {
-      // Increase sharedpoint shared size
-      sharedpoint.size -= fileentry.file.size;
+      if(error)
+        console.error(error)
 
-      db.sharepoints_put(sharedpoint, function()
+      else
       {
-        var event = document.createEvent("Event");
-            event.initEvent('sharedpoints.update',true,true);
+        // Increase sharedpoint shared size
+        sharedpoint.size -= fileentry.file.size;
 
-        self.dispatchEvent(event);
-      });
+        db.sharepoints_put(sharedpoint, function(error, sharedpoint)
+        {
+          if(error)
+            console.error(error)
+
+          else
+          {
+            var event = document.createEvent("Event");
+                event.initEvent('sharedpoints.update',true,true);
+
+            self.dispatchEvent(event);
+          }
+        });
+      }
     });
   };
 
 
   this.files_downloading = function(cb)
   {
-    db.files_getAll(null, function(filelist)
+    db.files_getAll(null, function(error, filelist)
     {
-      var downloading = [];
+      if(error)
+        console(error)
 
-      for(var i = 0, fileentry; fileentry = filelist[i]; i++)
-        if(fileentry.bitmap)
-          downloading.push(fileentry);
+      else
+      {
+        var downloading = [];
 
-      // Update Downloading files list
-      cb(null, downloading);
+        for(var i = 0, fileentry; fileentry = filelist[i]; i++)
+          if(fileentry.bitmap)
+            downloading.push(fileentry);
+
+        // Update Downloading files list
+        cb(null, downloading);
+      }
     });
   };
 
   this.files_sharing = function(cb)
   {
-    db.files_getAll(null, function(filelist)
+    db.files_getAll(null, function(error, filelist)
     {
-      var sharing = []
+      if(error)
+        console(error)
 
-      for(var i=0, fileentry; fileentry=filelist[i]; i++)
-        if(!fileentry.bitmap)
-          sharing.push(fileentry)
+      else
+      {
+        var sharing = []
 
-      // Update Sharing files list
-      cb(null, sharing)
+        for(var i=0, fileentry; fileentry=filelist[i]; i++)
+          if(!fileentry.bitmap)
+            sharing.push(fileentry)
+
+        // Update Sharing files list
+        cb(null, sharing)
+      }
     })
   }
 }

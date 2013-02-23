@@ -24,7 +24,8 @@ function Transport_Search_init(transport, db, peersManager) {
       if (uid == peersManager.uid) return;
 
       // Search hashes on own files
-      db.files_get(hashes, function() {
+      db.files_get(hashes, function(error, fileslist)
+      {
 
       });
 

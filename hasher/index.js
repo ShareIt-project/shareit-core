@@ -33,10 +33,14 @@ function Hasher(db, policy, sharedpointsManager)
   function fileentry_delete(fileentry)
   {
     // Remove file from the database
-    db.files_delete(fileentry.hash, function()
+    db.files_delete(fileentry.hash, function(error, result)
     {
+      if(error)
+        console.error(error)
+
       // Notify that the file have been deleted
-      if (self.ondeleted) self.ondeleted(fileentry);
+      else if(self.ondeleted)
+         self.ondeleted(fileentry);
     });
   }
 
@@ -56,10 +60,14 @@ function Hasher(db, policy, sharedpointsManager)
 
     function addFile(fileentry)
     {
-      db.files_put(fileentry, function()
+      db.files_put(fileentry, function(error, result)
       {
+        if(error)
+          console.error(error)
+
         // Notify that the file have been hashed
-        if (self.onhashed) self.onhashed(fileentry);
+        else if(self.onhashed)
+          self.onhashed(fileentry);
       });
     }
 
@@ -168,14 +176,25 @@ function Hasher(db, policy, sharedpointsManager)
     clearTimeout(timeout);
     timeout = 'hashing';
 
-    sharedpointsManager.getSharedpoints(function(sharedpoints)
+    sharedpointsManager.getSharedpoints(function(error, sharedpoints)
     {
-      db.files_getAll(null, function(fileentries)
+      if(error)
       {
+        console.error(error)
+        return
+      }
+
+      db.files_getAll(null, function(error, fileentries)
+      {
+        if(error)
+        {
+          console.error(error)
+          return
+        }
+
         /**
          * Check if the sharedpoint of a file exists or have been removed
          */
-
         function sharedpoint_exist(name)
         {
           for(var i = 0; i < sharedpoints.length; i++)

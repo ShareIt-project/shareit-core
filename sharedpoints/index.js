@@ -13,41 +13,50 @@ function SharedpointsManager(db, filesManager)
     filesManager._send_file_deleted(fileentry);
   };
 
-  this.getSharedpoints = function(onsuccess)
+  this.getSharedpoints = function(callback)
   {
-    db.sharepoints_getAll(null, onsuccess);
+    db.sharepoints_getAll(null, callback);
   };
 
 //  var sharedpoints = []
 //
-//  this.getSharedpoints(function(sharedpoints)
+//  this.getSharedpoints(function(error, sharedpoints)
 //  {
-//    for(var i=0, sharedpoint; sharedpoint= sharedpoints[i]; i++)
-//    {
-//      switch(sharedpoint.type)
-//      {
-//        case 'dropbox':
-//          break
+//    if(error)
+//      console.error(error)
 //
-//        case 'folder':
-//          break
+//    else
+//      for(var i=0, sharedpoint; sharedpoint= sharedpoints[i]; i++)
+//      {
+//        switch(sharedpoint.type)
+//        {
+//          case 'dropbox':
+//            break
+//
+//          case 'folder':
+//            break
+//        }
 //      }
-//    }
-//  })
+//    })
   this.addSharedpoint_Folder = function(files, cb)
   {
     var sharedpoint_name = files[0].webkitRelativePath.split('/')[0];
 
-    this.getSharedpoints(function(sharedpoints)
+    this.getSharedpoints(function(error, sharedpoints)
     {
-      for(var i = 0, sharedpoint; sharedpoint = sharedpoints[i]; i++)
-        if(sharedpoint.name == name)
-        {
-          if(cb)
-            cb(new Error('Sharedpoint already defined'));
+      if(error)
+        console.error(error)
 
-          return;
-        }
+      else
+      {
+        for(var i = 0, sharedpoint; sharedpoint = sharedpoints[i]; i++)
+          if(sharedpoint.name == name)
+          {
+            if(cb)
+              cb(new Error('Sharedpoint already defined'));
+
+            return;
+          }
 
         var sharedpoint =
         {
@@ -56,17 +65,25 @@ function SharedpointsManager(db, filesManager)
           size: 0
         };
 
-      db.sharepoints_put(sharedpoint);
+        db.sharepoints_put(sharedpoint);
 
-      hasher.hash(files, sharedpoint_name);
+        hasher.hash(files, sharedpoint_name);
 
-      if(cb)
-        cb();
+        if(cb)
+          cb();
+      }
     });
   };
 
   this.delete = function(name, onsuccess)
   {
-    db.sharepoints_delete(name, onsuccess);
+    db.sharepoints_delete(name, function(error, result)
+    {
+      if(error)
+        console.error(error)
+
+      else if(onsuccess)
+        onsuccess(result)
+    });
   };
 }

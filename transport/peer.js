@@ -45,8 +45,14 @@ function Transport_Peer_init(transport, db, filesManager)
 
     // Check if we have already any of the files
     // It's stupid to try to download it... and also give errors
-    db.files_getAll(null, function(fileslist)
+    db.files_getAll(null, function(error, fileslist)
     {
+      if(error)
+      {
+        console.error(error)
+        return
+      }
+
       for(var i = 0, fileentry; fileentry = fileentries[i]; i++)
         check_ifOwned(fileentry, fileslist);
 
@@ -93,8 +99,14 @@ function Transport_Peer_init(transport, db, filesManager)
         return;
 
       // Check if we have already the files
-      db.files_getAll(null, function(fileslist)
+      db.files_getAll(null, function(error, fileslist)
       {
+        if(error)
+        {
+          console.error(error)
+          return
+        }
+
         check_ifOwned(fileentry, fileslist);
 
         // Add the fileentry to the fileslist
@@ -153,9 +165,13 @@ function Transport_Peer_init(transport, db, filesManager)
 
     data = byteArray;
 
-    db.files_get(hash, function(fileentry)
+    db.files_get(hash, function(error, fileentry)
     {
-      filesManager.updateFile(fileentry, chunk, data);
+      if(error)
+        console.error(error)
+
+      else
+        filesManager.updateFile(fileentry, chunk, data);
     });
   });
 
