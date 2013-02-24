@@ -1,6 +1,21 @@
 // Based on code from https://github.com/jaredhanson/jsonrpc-postmessage
 
 importScripts(
+    '../webp2p/peersManager.js',
+
+    '../webp2p/handshake/index.js',
+    '../webp2p/handshake/PubNub.js',
+    '../webp2p/handshake/simpleSignaling.js',
+
+    '../webp2p/lib/datachannel.js',
+    '../webp2p/lib/EventTarget.js',
+    '../webp2p/lib/pubnub-3.3.min.js',
+    '../webp2p/lib/simpleSignaling.js',
+
+    '../webp2p/transport/index.js',
+    '../webp2p/transport/routing.js')
+
+importScripts(
     'bitmap.js',
     'cacheBackup.js',
     'db.js',
