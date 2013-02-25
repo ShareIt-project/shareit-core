@@ -138,8 +138,8 @@ _priv.Transport_Host_init = function(transport, db)
       transport.emit('transfer.send', hash, chunk, evt.target.result);
     };
 
-    var start = chunk * _priv.chunksize;
-    var stop = start + _priv.chunksize;
+    var start = chunk * module.chunksize;
+    var stop = start + module.chunksize;
 
     db.files_get(hash, function(error, fileentry)
     {

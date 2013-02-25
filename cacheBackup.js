@@ -121,8 +121,8 @@ _priv.CacheBackup = function(db, filesManager)
                     filesManager.updateFile(fileentry, chunk, data);
                   };
 
-                  var start = chunk * _priv.chunksize;
-                  var stop = start + _priv.chunksize;
+                  var start = chunk * module.chunksize;
+                  var stop = start + module.chunksize;
 
                   blob.getBlob(zip.getMimeType(file.name), function(blob)
                   {
