@@ -1,12 +1,19 @@
-function Dropbox(db, options) {
-  var driver = new Dropbox.Drivers.Popup({
+var shareit = (function(module){
+var _priv = module._priv = module._priv || {}
+
+_prinv.Dropbox = function(db, options)
+{
+  var driver = new Dropbox.Drivers.Popup(
+  {
     receiverFile: 'oauth_receiver.html'
   });
 
   var client = new Dropbox.Client(options);
   client.authDriver(driver);
-  client.authenticate(function(error, client) {
-    if (error) {
+  client.authenticate(function(error, client)
+  {
+    if(error)
+    {
       console.error(error);
       dropboxClient = null;
     }
@@ -14,16 +21,21 @@ function Dropbox(db, options) {
 
   var versionTag = '';
 
-  this.getFiles = function(onsuccess) {
+  this.getFiles = function(onsuccess)
+  {
     var files = [];
 
-    client.readdir('/', {
+    client.readdir('/',
+    {
       versionTag: versionTag
-    }, function(error, names, stat, entries) {
+    },
+    function(error, names, stat, entries)
+    {
       versionTag = stat.versionTag;
 
-      for (var i = 0, entry; entry = entries[i]; i++)
-        if (entry.isFile) files.push({
+      for(var i = 0, entry; entry = entries[i]; i++)
+        if(entry.isFile) files.push(
+        {
           path: entry.path,
           name: entry.name,
           type: entry.mimeType,
@@ -35,7 +47,11 @@ function Dropbox(db, options) {
   };
 
   // Start fetching files
-  this.getFiles(function(files) {
+  this.getFiles(function(files)
+  {
     hasher.hash(files, sharedpoint);
   });
 }
+
+return module
+})(shareit || {})

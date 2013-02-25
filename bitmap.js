@@ -1,11 +1,13 @@
+(function(module){
+
 /**
  * @classdesc Memory and band-width optimized Bitmap object with random access.
  * @constructor
  * @augments BoolArray
  * @param {Number} length Size of the {Bitmap}.
  */
-
-function Bitmap(length) {
+module.Bitmap = function(length)
+{
   this.prototype = new BoolArray(length);
 
   /**
@@ -13,11 +15,12 @@ function Bitmap(length) {
    * @param {Boolean} [setted] Returned indexes must be setted or unsetted.
    * @return {Array} Array with the index of the setted or unsetted bits.
    */
-  this.indexes = function(setted) {
+  this.indexes = function(setted)
+  {
     var array = [];
 
-    for (var i = 0; i < this.prototype.length; i++)
-      if (this.prototype.get(i) == setted) array.push(i);
+    for(var i = 0; i < this.prototype.length; i++)
+      if(this.prototype.get(i) == setted) array.push(i);
 
       return array;
   };
@@ -29,10 +32,12 @@ function Bitmap(length) {
    * @return {Number|undefined} Index of the setted or unsetted bit or
    * undefined if none is available.
    */
-  this.getRandom = function(setted) {
+  this.getRandom = function(setted)
+  {
     var array = this.indexes(setted);
 
-    if (array.length) return array[Math.floor(Math.random() * array.length)];
+    if(array.length)
+      return array[Math.floor(Math.random() * array.length)];
   };
 
   /**
@@ -40,7 +45,10 @@ function Bitmap(length) {
    * @param {Number} index Index of the bit to set.
    * @param {Boolean} value Value of the bit to set.
    */
-  this.set = function(index, value) {
+  this.set = function(index, value)
+  {
     this.prototype.set(index, value);
   };
 }
+
+})(this)

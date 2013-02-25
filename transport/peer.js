@@ -1,3 +1,6 @@
+var shareit = (function(module){
+var _priv = module._priv = module._priv || {}
+
 var chunksize = 65536;
 
 
@@ -7,8 +10,7 @@ var chunksize = 65536;
  * @param {IDBdatabase} db ShareIt! database.
  * @param {FilesManager} filesManager {FilesManager} object.
  */
-
-function Transport_Peer_init(transport, db, filesManager)
+_priv.Transport_Peer_init = function(transport, db, filesManager)
 {
   /**
    * Check if we already have the file and set it references to our copy
@@ -16,7 +18,8 @@ function Transport_Peer_init(transport, db, filesManager)
    * @param {Array} fileslist List of {Fileentry}s.
    */
 
-  function check_ifOwned(fileentry, fileslist) {
+  function check_ifOwned(fileentry, fileslist)
+  {
     // We add here ad-hoc the channel of the peer where we got
     // the file since we currently don't have support for hashes
     // nor tracker systems
@@ -24,8 +27,9 @@ function Transport_Peer_init(transport, db, filesManager)
 
     // Check if we have the file already, and if so set it our copy
     // bitmap and blob reference
-    for (var j = 0, file_hosted; file_hosted = fileslist[j]; j++)
-      if (fileentry.hash == file_hosted.hash) {
+    for(var j = 0, file_hosted; file_hosted = fileslist[j]; j++)
+      if(fileentry.hash == file_hosted.hash)
+      {
         fileentry.bitmap = file_hosted.bitmap;
         fileentry.blob = file_hosted.file || file_hosted.blob;
 
@@ -185,3 +189,6 @@ function Transport_Peer_init(transport, db, filesManager)
     transport.emit('transfer.query', fileentry.hash, chunk);
   };
 }
+
+return module
+})(shareit || {})

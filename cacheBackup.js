@@ -1,8 +1,12 @@
-function CacheBackup(db, filesManager)
+var shareit = (function(module){
+var _priv = module._priv = module._priv || {}
+
+_priv.CacheBackup = function(db, filesManager)
 {
   zip.workerScriptsPath = 'js/shareit-core/lib/zip.js/';
 
-  this.export = function(onfinish, onprogress, onerror) {
+  this.export = function(onfinish, onprogress, onerror)
+  {
     db.files_getAll(null, function(error, fileslist)
     {
       if(error)
@@ -21,33 +25,39 @@ function CacheBackup(db, filesManager)
       // corresponding folder and generate the JSON metadata file
       var files = [];
 
-      for (var i = 0, fileentry; fileentry = fileslist[i]; i++)
-        if (fileentry.blob) {
+      for(var i = 0, fileentry; fileentry = fileslist[i]; i++)
+        if(fileentry.blob)
+        {
           // Store blob on Zip file
           blobs.addBlob(fileentry.hash, fileentry.blob);
 
           // Generate file path
           var path = '';
-          if (fileentry.sharedpoint) {
+          if(fileentry.sharedpoint)
+          {
             path += fileentry.sharedpoint;
-            if (fileentry.path != '') path += '/' + fileentry.path;
+            if(fileentry.path != '')
+              path += '/' + fileentry.path;
           }
 
           // Generate file metadata
-          var file = {
+          var file =
+          {
             hash: fileentry.hash,
             path: path,
             name: fileentry.name
           };
 
-          if (fileentry.bitmap) file.bitmap = bitmap;
+          if(fileentry.bitmap)
+            file.bitmap = bitmap;
 
           // Add file to files metadata list
           files.push(file);
         }
 
         // Export the cache if it has items
-        if (files.length) {
+        if(files.length)
+        {
           // Store the JSON metadata file inside the Zip file
           fs.root.addText('files.json', JSON.stringify(files));
 
@@ -56,7 +66,8 @@ function CacheBackup(db, filesManager)
         }
 
       // Cache has no files
-        else if (onfinish) onfinish();
+        else if(onfinish)
+          onfinish();
     });
   };
 
@@ -100,7 +111,8 @@ function CacheBackup(db, filesManager)
                   var reader = new FileReader();
                   reader.onerror = function(evt)
                   {
-                    console.error('CacheBackup.import(' + file.hash + ', ' + chunk + ") = '" + evt.target.result + "'");
+                    console.error('CacheBackup.import('+file.hash+', '+chunk+
+                                  ") = '" + evt.target.result + "'");
                   };
                   reader.onload = function(event)
                   {
@@ -169,3 +181,6 @@ function CacheBackup(db, filesManager)
     }, cb);
   };
 }
+
+return module
+})(shareit || {})

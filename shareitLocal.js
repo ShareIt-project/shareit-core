@@ -1,6 +1,7 @@
-shareit = shareit || {}
+var shareit = (function(module){
+var _priv = module._priv = module._priv || {}
 
-shareit.Local = function(onsuccess)
+module.Local = function(onsuccess)
 {
   EventTarget.call(this);
 
@@ -13,18 +14,18 @@ shareit.Local = function(onsuccess)
   }
 
 
-  var peersManager = new PeersManager()
+  var peersManager = new _priv.PeersManager()
 
   // Init database
-  DB_init(function(db)
+  _priv.DB_init(function(db)
   {
-    var filesManager = new FilesManager(db, peersManager)
+    var filesManager = new _priv.FilesManager(db, peersManager)
 
     // Init cache backup system
-    var cacheBackup = new CacheBackup(db, filesManager)
+    var cacheBackup = new _priv.CacheBackup(db, filesManager)
 
     // Init sharedpoints manager
-    var sharedpointsManager = new SharedpointsManager(db, filesManager)
+    var sharedpointsManager = new _priv.SharedpointsManager(db, filesManager)
 
 
     self.cacheBackup_export = function(onfinish, onprogress, onerror)
@@ -101,3 +102,6 @@ shareit.Local = function(onsuccess)
       onsuccess(self)
   })
 }
+
+return module
+})(shareit || {})

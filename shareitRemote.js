@@ -1,6 +1,9 @@
 // Based on code from https://github.com/jaredhanson/jsonrpc-postmessage
 
-shareit.Remote = function(channel, onsuccess)
+var shareit = (function(module){
+var _priv = module._priv = module._priv || {}
+
+module.Remote = function(channel, onsuccess)
 {
   EventTarget.call(this);
 
@@ -121,3 +124,6 @@ shareit.Remote = function(channel, onsuccess)
   if(onsuccess)
     onsuccess(this)
 }
+
+return module
+})(shareit || {})

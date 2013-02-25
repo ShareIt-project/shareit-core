@@ -1,8 +1,11 @@
+var shareit = (function(module){
+var _priv = module._priv = module._priv || {}
+
 /**
  * 
  * @param {IDBDatabase} db ShareIt! database.
  */
-function FilesManager(db, peersManager)
+_priv.FilesManager = function(db, peersManager)
 {
   EventTarget.call(this);
 
@@ -335,3 +338,6 @@ function FilesManager(db, peersManager)
     })
   }
 }
+
+return module
+})(shareit || {})

@@ -1,10 +1,12 @@
+var shareit = (function(module){
+var _priv = module._priv = module._priv || {}
+
 /**
  * Update the SharedPoints and hash its files
  * @param {IDBDatabase} db ShareIt! database.
  * @param {?Function} policy Function to manage the policy access.
  */
-
-function Hasher(db, policy, sharedpointsManager)
+_priv.Hasher = function(db, policy, sharedpointsManager)
 {
   var queue = [];
   var timeout;
@@ -21,7 +23,7 @@ function Hasher(db, policy, sharedpointsManager)
     timeout = setTimeout(function()
     {
       self.refresh();
-      //        }, 30*1000)
+//    }, 30*1000)
     }, 60 * 60 * 1000);
   }
 
@@ -40,7 +42,7 @@ function Hasher(db, policy, sharedpointsManager)
 
       // Notify that the file have been deleted
       else if(self.ondeleted)
-         self.ondeleted(fileentry);
+        self.ondeleted(fileentry);
     });
   }
 
@@ -225,5 +227,8 @@ function Hasher(db, policy, sharedpointsManager)
   };
 
   // Start hashing new files from the shared points on load
-  //    self.refresh()
+//  self.refresh()
 }
+
+return module
+})(shareit || {})

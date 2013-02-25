@@ -1,7 +1,10 @@
-function SharedpointsManager(db, filesManager)
+var shareit = (function(module){
+var _priv = module._priv = module._priv || {}
+
+_priv.SharedpointsManager = function(db, filesManager)
 {
   // Init hasher
-  var hasher = new Hasher(db, policy, this);
+  var hasher = new _priv.Hasher(db, policy, this);
   hasher.onhashed = function(fileentry)
   {
     // Notify the other peers about the new hashed file
@@ -87,3 +90,6 @@ function SharedpointsManager(db, filesManager)
     });
   };
 }
+
+return module
+})(shareit || {})

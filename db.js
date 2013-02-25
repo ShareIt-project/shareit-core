@@ -1,11 +1,13 @@
-indexedDB = indexedDB || webkitIndexedDB || mozIndexedDB || msIndexedDB;
+var shareit = (function(module){
+var _priv = module._priv = module._priv || {}
+
+var indexedDB = indexedDB || webkitIndexedDB || mozIndexedDB || msIndexedDB;
 
 /**
  * Initializes the database
  * @param {Function} onsuccess Callback called when database is ready.
  */
-
-function DB_init(onsuccess)
+_priv.DB_init = function(onsuccess)
 {
   var version = 2;
 
@@ -331,3 +333,6 @@ function DB_init(onsuccess)
     upgradedb(event.target.result);
   };
 }
+
+return module
+})(shareit || {})
