@@ -1,8 +1,6 @@
 var shareit = (function(module){
 var _priv = module._priv = module._priv || {}
 
-var chunksize = 65536;
-
 
 /**
  * Addapt a transport layer to be used as a peer

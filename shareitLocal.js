@@ -1,4 +1,4 @@
-var shareit = (function(module){
+var shareit = (function(module, webp2p){
 var _priv = module._priv = module._priv || {}
 
 module.Local = function(onsuccess)
@@ -14,7 +14,7 @@ module.Local = function(onsuccess)
   }
 
 
-  var peersManager = new _priv.PeersManager()
+  var peersManager = new webp2p.PeersManager()
 
   // Init database
   _priv.DB_init(function(db)
@@ -104,4 +104,4 @@ module.Local = function(onsuccess)
 }
 
 return module
-})(shareit || {})
+})(shareit || {}, webp2p)

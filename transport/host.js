@@ -1,8 +1,6 @@
 var shareit = (function(module){
 var _priv = module._priv = module._priv || {}
 
-var chunksize = 65536;
-
 
 // Filereader support (be able to host files from the filesystem)
 if(typeof FileReader == 'undefined')
@@ -140,8 +138,8 @@ _priv.Transport_Host_init = function(transport, db)
       transport.emit('transfer.send', hash, chunk, evt.target.result);
     };
 
-    var start = chunk * chunksize;
-    var stop = start + chunksize;
+    var start = chunk * _priv.chunksize;
+    var stop = start + _priv.chunksize;
 
     db.files_get(hash, function(error, fileentry)
     {

@@ -1,7 +1,7 @@
 var shareit = (function(module){
 var _priv = module._priv = module._priv || {}
 
-_prinv.Dropbox = function(db, options)
+_priv.Dropbox = function(db, options)
 {
   var driver = new Dropbox.Drivers.Popup(
   {

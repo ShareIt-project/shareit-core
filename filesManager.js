@@ -1,6 +1,9 @@
 var shareit = (function(module){
 var _priv = module._priv = module._priv || {}
 
+_priv.chunksize = 65536;
+
+
 /**
  * 
  * @param {IDBDatabase} db ShareIt! database.
@@ -42,8 +45,8 @@ _priv.FilesManager = function(db, peersManager)
   {
     var channel = event.channel
 
-    Transport_Host_init(channel, db);
-    Transport_Peer_init(channel, db, self);
+    _priv.Transport_Host_init(channel, db);
+    _priv.Transport_Peer_init(channel, db, self);
 
     self.addEventListener('file.added', function(event)
     {
@@ -95,7 +98,7 @@ _priv.FilesManager = function(db, peersManager)
 
     // Calc number of necesary chunks to download
     // and add a bitmap to our file stub
-    var chunks = fileentry.size / chunksize;
+    var chunks = fileentry.size / _priv.chunksize;
     if(chunks % 1 != 0)
        chunks = Math.floor(chunks) + 1;
 
@@ -123,7 +126,7 @@ _priv.FilesManager = function(db, peersManager)
 
   this.transfer_update = function(fileentry, pending_chunks)
   {
-    var chunks = fileentry.size / chunksize;
+    var chunks = fileentry.size / _priv.chunksize;
     if(chunks % 1 != 0)
        chunks = Math.floor(chunks) + 1;
 
@@ -165,7 +168,7 @@ _priv.FilesManager = function(db, peersManager)
     var fw = new FileWriter(fileentry.blob);
 
     // Calc and set pos, and increase blob size if necessary
-    var pos = chunk * chunksize;
+    var pos = chunk * _priv.chunksize;
     if(fw.length < pos)
        fw.truncate(pos);
     fw.seek(pos);
