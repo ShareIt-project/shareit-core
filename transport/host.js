@@ -11,7 +11,7 @@ if (typeof FileReader == 'undefined') {
 /**
  * Addapt a transport layer to be used as a host
  * @param transport
- * @param {IDBdatabase} db WebP2P database.
+ * @param {IDBdatabase} db ShareIt! database.
  */
 
 function Transport_Host_init(transport, db) {

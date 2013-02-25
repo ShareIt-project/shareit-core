@@ -4,7 +4,7 @@ var chunksize = 65536;
 /**
  * Addapt a transport layer to be used as a peer
  * @param transport
- * @param {IDBdatabase} db WebP2P database.
+ * @param {IDBdatabase} db ShareIt! database.
  * @param {FilesManager} filesManager {FilesManager} object.
  */
 

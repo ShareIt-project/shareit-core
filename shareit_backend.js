@@ -21,7 +21,7 @@ importScripts(
     'db.js',
     'filesManager.js',
     'utils.js',
-    'webp2pLocal.js',
+    'ShareitLocal.js',
 
     'hasher/index.js',
 
@@ -68,9 +68,9 @@ function expose(name, service)
   }
 }
 
-var webp2p = new webp2p.Webp2pLocal(function(webp2p)
+var shareit = new shareit.Local(function(shareit)
 {
-  expose(webp2p)
+  expose(shareit)
 })
 
 
@@ -104,7 +104,7 @@ self.onmessage = function(event)
     // invoke the method
     try
     {
-      method.apply(webp2p, params);
+      method.apply(shareit, params);
     }
     catch(err)
     {

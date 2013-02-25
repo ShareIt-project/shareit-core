@@ -1,6 +1,6 @@
 function CacheBackup(db, filesManager)
 {
-  zip.workerScriptsPath = 'js/webp2p/lib/zip.js/';
+  zip.workerScriptsPath = 'js/shareit-core/lib/zip.js/';
 
   this.export = function(onfinish, onprogress, onerror) {
     db.files_getAll(null, function(error, fileslist)

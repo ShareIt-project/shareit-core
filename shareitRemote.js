@@ -1,6 +1,6 @@
 // Based on code from https://github.com/jaredhanson/jsonrpc-postmessage
 
-webp2p.Webp2pRemote = function(channel, onsuccess)
+shareit.Remote = function(channel, onsuccess)
 {
   EventTarget.call(this);
 

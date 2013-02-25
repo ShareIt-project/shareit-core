@@ -1,6 +1,6 @@
-webp2p = webp2p || {}
+shareit = shareit || {}
 
-webp2p.Webp2pLocal = function(onsuccess)
+shareit.Local = function(onsuccess)
 {
   EventTarget.call(this);
 

@@ -43,8 +43,8 @@ shareit.load(
  'db',
  'filesManager',
  'utils',
- 'webp2pLocal',
- 'webp2pRemote',
+ 'shareitLocal',
+ 'shareitRemote',
 
  'hasher/index',
 
