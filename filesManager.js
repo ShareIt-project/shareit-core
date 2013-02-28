@@ -50,13 +50,13 @@ _priv.FilesManager = function(db, peersManager)
 
     self.addEventListener('file.added', function(event)
     {
-      var fileentry = event.data[0];
+      var fileentry = event.fileentry;
 
       channel._send_file_added(fileentry);
     });
     self.addEventListener('file.deleted', function(event)
     {
-      var fileentry = event.data[0];
+      var fileentry = event.fileentry;
 
       channel._send_file_deleted(fileentry);
     });
@@ -114,7 +114,7 @@ _priv.FilesManager = function(db, peersManager)
       {
         var event = document.createEvent("Event");
             event.initEvent('transfer.begin',true,true);
-            event.data = [fileentry]
+            event.fileentry = fileentry
 
         self.dispatchEvent(event);
 
