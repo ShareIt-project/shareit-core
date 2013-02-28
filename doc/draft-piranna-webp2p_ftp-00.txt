@@ -1,0 +1,225 @@
+INTERNET DRAFT                          Jesús Leganés Combarro "piranna"
+Document: draft-piranna-webp2p_ftp-00                      (independent)
+
+
+                            webp2p ftp
+
+Abstract
+
+    This draft describes a protocol by which client-side applications,
+    running inside a web browser, can communicate with another web
+    browsers to interchange files. The protocol supports listing the
+    contents of the shared files on other peers and receiving updates
+    on added and removed files, as well as retrieving individual
+    documents.
+
+Status of this Memo
+
+    This Internet-Draft is work-in-progress.
+
+Copyright Notice
+
+    Copyright (c) 2013 the persons identified as the document authors.
+    All rights reserved.
+
+Table of Contents
+
+    1. Introduction....................................................2
+    2. Terminology.....................................................2
+    3. Requests........................................................3
+    4. Response codes..................................................4
+    5. Acknowledgments.................................................9
+    6. References......................................................9
+      6.1. Normative References........................................9
+      6.2. Informative References......................................9
+    7. Authors' addresses.............................................10
+
+
+piranna                                                         [Page 1]
+ 
+Internet-Draft              webp2p ftp                       March 2013
+
+
+1.  Introduction
+
+    This specification describes a protocol to transfer files on top of
+    WebP2P, but could be used on top of any other bi-directional transport.
+    It is based on JSON messages The actions the interface exposes are:
+
+       *  fileslist.query: ask for the names of all the documents and
+          subfolders currently shared by a peer
+
+       *  fileslist.send: send to the other peer our full list of shared
+          documents and subfolders
+
+       *  fileslist.disableUpdates: set to the other peer to don't send us
+          notifications when shared files changes
+
+       *  fileslist.added: notification of a new shared file
+
+       *  fileslist.deleted: notification of a deleted shared file
+
+       *  transfer.query: ask for a file fragment
+
+       *  transfer.send: send to the other peer a file fragment
+
+    The exact details of these four actions are described in this
+    specification.
+
+2. Terminology
+
+    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+    document are to be interpreted as described in RFC 2119 [WORDS].
+
+    "SHOULD" and "SHOULD NOT" are appropriate when valid exceptions to a
+    general requirement are known to exist or appear to exist, and it is
+    infeasible or impractical to enumerate all of them.  However, they
+    should not be interpreted as permitting implementors to fail to
+    implement the general requirement when such failure would result in
+    interoperability failure.
+
+
+piranna                                                         [Page 2]
+
+Internet-Draft              webp2p ftp                      March 2013
+
+
+4. Requests
+
+    Client-to-server requests SHOULD be made over https [HTTPS]. The 
+    root folder of the storage tree is represented by the URL
+    <storage_root> '/'. Subsequently, if <parent_folder> is the URL of a
+    folder, then the URL of an item contained in it is
+    <parent_folder> <document_name> for a document, or
+    <parent_folder> <folder_name> '/' for a folder. Item names MAY
+    contain a-z, A-Z, 0-9, %,  -, _.
+
+    A successful GET request to a folder SHOULD be responded to with a
+    JSON document (content type 'application/json'), representing a map
+    in which contained documents appear as entries <item_name> to
+    <current_version>, and contained folders appear as entries
+    <item_name> '/' to <current_version>, for instance:
+     
+       {
+         "abc": 1234567890123,
+         "def/": 1234567890456
+       }
+      
+    Empty folders are treated as non-existing, and therefore GET
+    requests to them SHOULD be responded to with a 404 response, and an
+
+
+piranna                                                         [Page 3]
+
+Internet-Draft              webp2p ftp                      March 2013
+
+
+    empty folder MUST NOT be listed as an item in its parent folder.
+    Also, folders SHOULD be created silently, as necessary to contain
+    newly added items. This way, PUT and DELETE requests only need to be
+    made to documents, and folder management becomes an implicit result.
+
+    A successful GET request to a document SHOULD be responded to with
+    the full document contents in the body, the document's content type
+    in a 'Content-Type' header, and the document's current version in an
+    'ETag' header.
+
+
+    A successful PUT request to a document MUST result in:
+       
+       * the request body being stored as the document's new content,
+       * parent and further ancestor folders being silently created as
+         necessary, with the document (name and version) being added to
+         its parent folder, and each folder added to its subsequent
+         parent,
+       * the value of its Content-Type header being stored as the
+         document's new content type,
+       * the current server time, in the form of milliseconds since
+         0:00 UCT, 1 January, 1970 being stored as the new version of
+         the document itself, as well as of its parent folder and
+         further ancestor folders.
+      
+    The response MUST contain an ETag header, with the document's new
+    version (milliseconds since the beginning of 1970) as its value.
+
+    A successful DELETE request to a document MUST result in the
+    deletion of that document from the storage, and from its parent
+    folder. If the parent folder is left empty by this, then it MUST
+    also be removed, and so on for ancestor folders.
+
+    A successful OPTIONS request SHOULD be responded to as described in
+    the CORS section below.
+
+
+piranna                                                         [Page 4]
+
+Internet-Draft              webp2p ftp                        March 2013
+
+
+5. Response codes
+
+    The following responses SHOULD be given in the indicated cases, in
+    order of preference, and SHOULD be recognized by the client:
+       
+       * 500 if an internal server error occurs,
+       * 420 if the client makes too frequent requests or is suspected
+             of malicious activity,
+       * 400 for all malformed requests (e.g. foreign characters in the
+             path or unrecognized http verb, etcetera), as well as for
+             all PUT and DELETE requests to folders,
+       * 401 for all requests that don't have a bearer token with
+             sufficient permissions,
+       * 404 for all DELETE and GET requests to nodes that do not exist
+             on the storage,
+       * 304 for a conditional GET request whose condition fails
+             (see "Versioning" below),
+       * 409 for a conditional PUT or DELETE request whose condition
+             fails (see "Versioning" below),
+       * 200 for all successful requests, including PUT and DELETE,
+
+    Clients SHOULD also handle the case where a response takes too long
+    to arrive, or where no response is received at all.
+
+
+piranna                                                         [Page 5]
+
+Internet-Draft              webp2p ftp                        March 2013
+
+
+14. Acknowledgements
+
+    The authors would like to thank everybody who contributed to the
+    development of this protocol, including Kenny Bentley, Javier Diaz,
+    Daniel Groeber, Bjarni Runar, Jan Wildeboer, Charles Schultz, Peter
+    Svensson, Valer Mischenko, Michiel Leenaars, Jan-Christoph
+    Borchardt, Garret Alfert, Sebastian Kippe, Max Wiehle, Melvin
+    Carvalho, Martin Stadler, Geoffroy Couprie, Niklas Cathor, Marco
+    Stahl, James Coglan, Ken Eucker, Daniel Brolund, elf Pavlik, Nick
+    Jennings, and Markus Sabadello, among many others.
+
+15. References
+
+15.1. Normative References
+
+    [WORDS]
+        Bradner, S., "Key words for use in RFCs to Indicate Requirement
+        Levels", BCP 14, RFC 2119, March 1997.
+
+15.2. Informative References
+
+
+piranna                                                         [Page 6]
+
+Internet-Draft              webp2p ftp                        March 2013
+
+
+16. Authors' addresses
+
+    Jesús Leganés Combarro "piranna"
+    (independent)
+
+    Email: piranna@gmail.com
+
+
+piranna                                                         [Page 7]
