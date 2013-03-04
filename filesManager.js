@@ -133,7 +133,8 @@ _priv.FilesManager = function(db, peersManager)
     // Notify about transfer update
     var event = document.createEvent("Event");
         event.initEvent('transfer.update',true,true);
-        event.data = [fileentry, 1 - pending_chunks / chunks]
+        event.fileentry = fileentry
+        event.value = 1 - pending_chunks / chunks
 
     this.dispatchEvent(event);
   };
@@ -146,9 +147,9 @@ _priv.FilesManager = function(db, peersManager)
     // Notify about transfer end
     var event = document.createEvent("Event");
         event.initEvent('transfer.end',true,true);
-        event.data = [fileentry]
+        event.fileentry = fileentry
 
-    self.dispatchEvent(event);
+    this.dispatchEvent(event);
 
     console.log('Transfer of ' + fileentry.name + ' finished!');
   };
@@ -226,7 +227,7 @@ _priv.FilesManager = function(db, peersManager)
   {
     var event = document.createEvent("Event");
         event.initEvent('file.added',true,true);
-        event.data = [fileentry]
+        event.fileentry = fileentry
 
     this.dispatchEvent(event);
 
@@ -266,7 +267,7 @@ _priv.FilesManager = function(db, peersManager)
   {
     var event = document.createEvent("Event");
         event.initEvent('file.deleted',true,true);
-        event.data = [fileentry]
+        event.fileentry = fileentry
 
     this.dispatchEvent(event);
 

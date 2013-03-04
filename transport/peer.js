@@ -64,7 +64,7 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
       // Notify about fileslist update
       var event = document.createEvent("Event");
           event.initEvent('fileslist._updated',true,true);
-          event.data = [_fileslist]
+          event.fileslist = _fileslist
 
       transport.dispatchEvent(event);
     });
@@ -117,7 +117,7 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
         // Notify about fileslist update
         var event = document.createEvent("Event");
             event.initEvent('fileslist._updated',true,true);
-            event.data = [_fileslist]
+            event.fileslist = _fileslist
 
         transport.dispatchEvent(event);
       });
@@ -141,7 +141,7 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
         // Notify about fileslist update
         var event = document.createEvent("Event");
             event.initEvent('fileslist._updated',true,true);
-            event.data = [_fileslist]
+            event.fileslist = _fileslist
 
         transport.dispatchEvent(event);
 
