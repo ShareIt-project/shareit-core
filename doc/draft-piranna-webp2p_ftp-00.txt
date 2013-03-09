@@ -6,12 +6,11 @@ Document: draft-piranna-webp2p_ftp-00                      (independent)
 
 Abstract
 
-    This draft describes a protocol by which client-side applications,
-    running inside a web browser, can communicate with another web
-    browsers to interchange files. The protocol supports listing the
-    contents of the shared files on other peers and receiving updates
-    on added and removed files, as well as retrieving individual
-    documents.
+    This draft describes a protocol by which two machines can
+    interchange files over a bi-directional communications channel. The
+    protocol supports listing the available files on other peers and
+    receiving updates on added and removed ones, as well as retrieving
+    individual documents.
 
 Status of this Memo
 
@@ -27,9 +26,33 @@ Table of Contents
     1. Introduction....................................................2
     2. Terminology.....................................................2
     3. Messages........................................................3
-    5. References......................................................4
-      5.1. Normative References........................................4
-    5. Authors' addresses..............................................4
+      3.1 Serialization and communication scheme.......................3
+      3.2 Files list...................................................3
+      3.3 Files transfers..............................................5
+    4. Acknowledges....................................................5
+    5. References......................................................5
+    6. Authors' addresses..............................................5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 piranna                                                         [Page 1]
@@ -40,9 +63,11 @@ Internet-Draft              webp2p ftp                        March 2013
 1.  Introduction
 
     This specification describes a protocol to transfer files using
-    WebRTC DataChannels, but could be used on top of any other
-    bi-directional transport like WebSockets or BoSH. It is based on
-    JSON messages. The actions the interface exposes are:
+    a bi-directional communications channel. It is mainly focused on
+    WebRTC DataChannels, but could be used as a WebSockets subprotocol
+    or over any other bi-directional transport layer like BoSH or any of
+    the HTML5 MessageChannels. It is based on JSON [JSON] messages. The
+    actions the interface exposes are:
 
         * fileslist.query: ask for the names of all the documents and
           subfolders currently shared by a peer
@@ -78,6 +103,17 @@ Internet-Draft              webp2p ftp                        March 2013
     interoperability failure.
 
 
+
+
+
+
+
+
+
+
+
+
+
 piranna                                                         [Page 2]
 
 Internet-Draft               webp2p ftp                       March 2013
@@ -85,49 +121,56 @@ Internet-Draft               webp2p ftp                       March 2013
 
 3. Messages
 
+3.1. Serialization and communication scheme
+
     Communication is done using a simplified version of JSON-RPC, using
     arrays to store the command in string format on the first position,
     and the arguments of that command in their most natural format
     (boolean, integer, string, object...) on the other ones. The array
-    is stringified previously to be send. Also communication is done in
-    a totally asynchronous way, not waiting for an answer and processing
-    all the messages in the order they are being received.
+    is stringified using the JSON format previously to be send. Ending
+    'falsy' arguments (0, null, undefined, void...) are not added to the
+    arguments list to earn bandwidth and should be filled ad-hoc by the
+    receiver. Once the command is serialized, it would be like in the
+    next example:
+
+    ["command.name", true, "arg 2", 3.0, 4, [1,2,3,4,5], "6th argument"]
+
+    On the receiver end, the JSON string would be parsed and an array
+    with this items in the same order they were sended will be created.
+
+    Communication is done in a totally asynchronous way, not waiting for
+    an answer and processing all the messages in the order they are
+    being received, no matter if a response was being waited from a
+    previous request or not.
+
+3.2. Files list
 
     A query for the list of all the files shared by the other peer is
-    achieved using the fileslist.query command with an OPTIONAL 'flags'
-    argument in integer format, allowing several options to be send in a
-    bitwise format. This options are:
+    achieved using the 'fileslist.query command' with an OPTIONAL
+    'flags' argument in integer format, allowing several options to be
+    send in a bitwise format. This options are:
 
         * SEND_UPDATES (1): set if we want to be notified when the list
-          of files get updated. If we want to disable notifications
-          after that, we can use the fileslist.disableUpdates command
-          without arguments.
+          of files get updated (unset by default).
 
-    The list of the files is send using the fileslist.send message. This
-    message doesn't necessarily need to be attached to a previous
-    fileslist.query command, being able to be send at any time. Its
-    argument is an array of fileentry objects, having as attributes:
+          If we want to disable notifications after that, we can use the
+          'fileslist.disableUpdates' command without arguments.
 
-        * hash: unique ID of the file, obtained using an SHA-512 hash of
-          the file content
-        * path: path of the file inside the peer hierarchy
-        * name: name of the file
-        * size: size of the file
-        * type: MIME-type of the file
+        * SMALL_FILES_ACCELERATOR (2): set if files content should be
+          passed on the hash field instead of the real file hash when
+          the file size is smaller that the hash length. This enable the
+          posibility to the requester peer to fill this files directly
+          instead of needing to do a new request to fetch its content,
+          saving bandwidth.
 
-    File updates are notified on a per-file basis, using the
-    fileslist.added and fileslist.deleted for added and deleted files,
-    respectively. Their only argument is the fileentry object of the
-    added/deleted file, as described previously.
+          It's recommended to use this flags only when this files
+          content is not protected by Intellectual Property laws or user
+          has agree to take full responsability over it.
 
-    File transfers are done requesting one file fragment at a time using
-    the transfer.query command. This includes the file hash as first
-    argument and the requested file chunk as the second one. Data is
-    send back asynchronously using the transfer.send command, with the
-    file hash as the first argument, the file chunk as the second one
-    and the requested file data as the third one. The data is send as a
-    binary string, that need to be converted back to a blob fragment by
-    the receiver previously to be included in the being-downloaded file.
+    A prety-printed example message (enabling updates and small files
+    accelerator) would be:
+
+    ["fileslist.query", 3]
 
 
 piranna                                                         [Page 3]
@@ -135,13 +178,109 @@ piranna                                                         [Page 3]
 Internet-Draft              webp2p ftp                        March 2013
 
 
-5. References
+    The list of the files is send using the 'fileslist.send' message.
+    This message doesn't necessarily need to be attached to a previous
+    'fileslist.query' request, being able to be send at any time. Its
+    argument is an array of fileentry objects, having as attributes:
 
-5.1. Normative References
+        * hash: unique ID of the file, obtained using an SHA-512 hash of
+          the file content
+        * path: path of the file inside the peer hierarchy. If it's
+          ommitted it will be considered as empty string
+        * name: name of the file
+        * size: size in bytes of the file. If ommitted file size will be
+          considered as zero bytes
+        * type: MIME-type of the file
+
+    A pretty-printed example message with just one empty file would be:
+
+    ["fileslist.send",
+     [{"hash": "z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==",
+       "path": "",
+       "name": "empty.txt",
+       "size": 0,
+       "type": "text/plain"
+      }
+     ]
+    ]
+
+    File updates are notified on a per-file basis, using the
+    'fileslist.added' and 'fileslist.deleted' for added and deleted
+    files, respectively. Fileslist.added only argument is the fileentry
+    object of the added file as described previously. On the other hand,
+    the argument of fileslist.deleted is only the file hash.
+
+    Pretty-printed example messages would be as:
+
+    ["fileslist.added", {"hash": "z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==",
+       "path": "",
+       "name": "empty.txt",
+       "size": 0,
+       "type": "text/plain"
+      }]
+    ["fileslist.deleted", "z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg=="]
+
+
+
+
+
+
+
+
+
+
+
+
+
+piranna                                                         [Page 4]
+
+Internet-Draft              webp2p ftp                        March 2013
+
+
+3.3. Files transfers
+
+    File transfers are done requesting one file fragment at a time using
+    the 'transfer.query' command. This includes the file hash as first
+    argument and the requested file chunk as the second one. Requested
+    chunks are expected to be inside the file range, starting at zero.
+    The number of file chunks is calculated dividing the file size by
+    the chunk length (currently 65536 bytes).
+
+    Data is send back asynchronously using the 'transfer.send' command,
+    with the file hash as the first argument, the file chunk as the
+    second one and the requested file data fragment as the third one.
+    The data is send as a binary string, that need to be converted back
+    to a blob fragment by the receiver previously to be included in the
+    downloading file.
+
+    Pretty-printed example messages would be as:
+
+    ["transfer.query",
+     "z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==",
+     0]
+    ["transfer.send",
+     "z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==",
+     0, ""]
+
+    User agents implementators can decide to don't do the real request
+    and fill the file automatically when the file size is zero or the
+    SMALL_FILES_ACCELERATOR have been used previously when requesting
+    the files list, having in fact the real file content instead.
+
+4. Acknowledges
+
+    The author would like to thank to Luis López Fernández for the help
+    offered in the redaction of this specification.
+
+5. References
 
     [WORDS]
         Bradner, S., "Key words for use in RFCs to Indicate Requirement
         Levels", BCP 14, RFC 2119, March 1997.
+
+    [JSON]
+        D. Crockford, "The application/json Media Type for JavaScript
+        Object Notation (JSON)", RFC 4627, July 2006.
 
 6. Authors' addresses
 
@@ -151,4 +290,5 @@ Internet-Draft              webp2p ftp                        March 2013
     Email: piranna@gmail.com
 
 
-piranna                                                         [Page 4]
+
+piranna                                                         [Page 5]
