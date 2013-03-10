@@ -33,9 +33,9 @@ module.Local = function(onsuccess)
       cacheBackup.export(onfinish, onprogress, onerror)
     }
 
-    self.cacheBackup_import = function(blob, cb)
+    self.cacheBackup_import = function(blob, callback)
     {
-      cacheBackup.import(blob, cb)
+      cacheBackup.import(blob, callback)
     }
 
     /**
@@ -46,34 +46,34 @@ module.Local = function(onsuccess)
      * @param {Function} cb Callback.
      * send the offer. If not defined send it to all connected peers.
      */
-    self.connectTo = function(uid, incomingChannel, cb)
+    self.connectTo = function(uid, incomingChannel, callback)
     {
-      peersManager.connectTo(uid, incomingChannel, cb)
+      peersManager.connectTo(uid, incomingChannel, callback)
     }
 
-    self.files_downloading = function(cb)
+    self.files_downloading = function(callback)
     {
-      filesManager.files_downloading(cb)
+      filesManager.files_downloading(callback)
     }
 
-    self.files_sharing = function(cb)
+    self.files_sharing = function(callback)
     {
-      filesManager.files_sharing(cb)
+      filesManager.files_sharing(callback)
     }
 
-    self.numPeers = function(cb)
+    self.numPeers = function(callback)
     {
-      cb(null, Object.keys(peersManager.getChannels()).length);
+      callback(null, Object.keys(peersManager.getChannels()).length);
     }
 
-    self.sharedpointsManager_addSharedpoint_Folder = function(files, cb)
+    self.sharedpointsManager_addSharedpoint_Folder = function(files, callback)
     {
-      sharedpointsManager.addSharedpoint_Folder(files, cb)
+      sharedpointsManager.addSharedpoint_Folder(files, callback)
     }
 
-    self.sharedpointsManager_getSharedpoints = function(cb)
+    self.sharedpointsManager_getSharedpoints = function(callback)
     {
-      sharedpointsManager.getSharedpoints(cb)
+      sharedpointsManager.getSharedpoints(callback)
     }
 
     /**

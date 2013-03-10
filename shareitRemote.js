@@ -69,9 +69,9 @@ module.Remote = function(channel, onsuccess)
   {
   }
 
-  this.cacheBackup_import = function(blob, cb)
+  this.cacheBackup_import = function(blob, callback)
   {
-    call('cacheBackup_import', blob, cb)
+    call('cacheBackup_import', blob, callback)
   }
 
   /**
@@ -82,34 +82,34 @@ module.Remote = function(channel, onsuccess)
      * @param {Function} cb Callback.
    * send the offer. If not defined send it to all connected peers.
    */
-  this.connectTo = function(uid, incomingChannel, cb)
+  this.connectTo = function(uid, incomingChannel, callback)
   {
-    call('connectTo', uid, incomingChannel, cb)
+    call('connectTo', uid, incomingChannel, callback)
   }
 
-  this.files_downloading = function(cb)
+  this.files_downloading = function(callback)
   {
-    call('files_downloading', incomingChannel, cb)
+    call('files_downloading', incomingChannel, callback)
   }
 
-  this.files_sharing = function(cb)
+  this.files_sharing = function(callback)
   {
-    call('files_sharing', cb)
+    call('files_sharing', callback)
   }
 
-  this.numPeers = function(cb)
+  this.numPeers = function(callback)
   {
-    call('numPeers', cb)
+    call('numPeers', callback)
   }
 
-  this.sharedpointsManager_addSharedpoint_Folder = function(files, cb)
+  this.sharedpointsManager_addSharedpoint_Folder = function(files, callback)
   {
-    call('sharedpointsManager_addSharedpoint_Folder', files, cb)
+    call('sharedpointsManager_addSharedpoint_Folder', files, callback)
   }
 
-  this.sharedpointsManager_getSharedpoints = function(cb)
+  this.sharedpointsManager_getSharedpoints = function(callback)
   {
-    call('sharedpointsManager_getSharedpoints', cb)
+    call('sharedpointsManager_getSharedpoints', callback)
   }
 
   /**

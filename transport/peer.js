@@ -81,7 +81,8 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
   /**
    * Request to the other peer don't send fileslist updates
    */
-  transport.fileslist_disableUpdates = function() {
+  transport.fileslist_disableUpdates = function()
+  {
     transport.emit('fileslist.disableUpdates');
   };
 
