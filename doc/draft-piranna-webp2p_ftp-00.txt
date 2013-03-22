@@ -31,7 +31,7 @@ Table of Contents
       3.3 Files transfers..............................................5
     4. Acknowledges....................................................5
     5. References......................................................5
-    6. Authors' addresses..............................................5
+    6. Authors' addresses..............................................6
 
 
 
@@ -164,8 +164,8 @@ Internet-Draft               webp2p ftp                       March 2013
           saving bandwidth.
 
           It's recommended to use this flags only when this files
-          content is not protected by Intellectual Property laws or user
-          has agree to take full responsability over it.
+          content is not protected by Intellectual Property laws or
+          after user has agree to take full responsability over it.
 
     A prety-printed example message (enabling updates and small files
     accelerator) would be:
@@ -264,8 +264,15 @@ Internet-Draft              webp2p ftp                        March 2013
 
     User agents implementators can decide to don't do the real request
     and fill the file automatically when the file size is zero or the
-    SMALL_FILES_ACCELERATOR have been used previously when requesting
-    the files list, having in fact the real file content instead.
+    SMALL_FILES_ACCELERATOR flag have been set previously requesting
+    the files list, having in fact the real file content instead of the
+    hash.
+
+    Transfer.query messages SHOULDN'T be done twice except in case we
+    are sure the message was lost. In case a transfer.send message is
+    received twice (from the same or different peers) for the same file
+    hash and chunk, it's decission of the user agent what to do, but
+    it's recommended to accept only the first one and ignore the others.
 
 4. Acknowledges
 
@@ -282,6 +289,13 @@ Internet-Draft              webp2p ftp                        March 2013
         D. Crockford, "The application/json Media Type for JavaScript
         Object Notation (JSON)", RFC 4627, July 2006.
 
+
+
+piranna                                                         [Page 5]
+
+Internet-Draft              webp2p ftp                        March 2013
+
+
 6. Authors' addresses
 
     Jesús Leganés Combarro "piranna"
@@ -291,4 +305,49 @@ Internet-Draft              webp2p ftp                        March 2013
 
 
 
-piranna                                                         [Page 5]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+piranna                                                         [Page 6]
