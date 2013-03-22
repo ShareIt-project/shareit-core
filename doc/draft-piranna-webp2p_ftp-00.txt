@@ -191,6 +191,9 @@ Internet-Draft              webp2p ftp                        March 2013
         * size: size in bytes of the file. If ommitted file size will be
           considered as zero bytes
         * type: MIME-type of the file
+        * charset: OPTIONAL field to indicate the data charset in case
+          file data content is text. This field is not used by the
+          specification, but can be useful for user agents.
 
     A pretty-printed example message with just one empty file would be:
 
@@ -219,9 +222,6 @@ Internet-Draft              webp2p ftp                        March 2013
        "type": "text/plain"
       }]
     ["fileslist.deleted", "z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg=="]
-
-
-
 
 
 
