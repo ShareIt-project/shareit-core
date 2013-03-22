@@ -251,7 +251,8 @@ Internet-Draft              webp2p ftp                        March 2013
     second one and the requested file data fragment as the third one.
     The data is send as a binary string, that need to be converted back
     to a blob fragment by the receiver previously to be included in the
-    downloading file.
+    downloading file. This binary string is encoded with the WebSockets
+    default content type, that currently it is UTF-8.
 
     Pretty-printed example messages would be as:
 
@@ -288,7 +289,6 @@ Internet-Draft              webp2p ftp                        March 2013
     [JSON]
         D. Crockford, "The application/json Media Type for JavaScript
         Object Notation (JSON)", RFC 4627, July 2006.
-
 
 
 piranna                                                         [Page 5]
