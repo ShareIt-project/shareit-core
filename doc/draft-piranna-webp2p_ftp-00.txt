@@ -194,6 +194,14 @@ Internet-Draft              webp2p ftp                        March 2013
         * charset: OPTIONAL field to indicate the data charset in case
           file data content is text. This field is not used by the
           specification, but can be useful for user agents.
+        * http: OPTIONAL field with a URL or list of URLs that point to
+          known locations where the file can be fetch directly using a
+          plain HTTP GET command without requiring any special special
+          header. The servers at this locations MUST support the HTTP
+          "Range" header. User agents can store this locations and do
+          requests to them to increase download speed, and also they can
+          send them to other peers. In that case, they can remove any of
+          them if the got a HTTP error doing a request.
 
     A pretty-printed example message with just one empty file would be:
 
@@ -222,14 +230,6 @@ Internet-Draft              webp2p ftp                        March 2013
        "type": "text/plain"
       }]
     ["fileslist.deleted", "z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg=="]
-
-
-
-
-
-
-
-
 
 
 piranna                                                         [Page 4]
