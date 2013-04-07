@@ -57,7 +57,7 @@ function IdbJS_install()
   /**
    * @constructor
    */
-  function IDBRequest()
+  function IDBRequest(source)
   {
     this.target = {}
   }
@@ -118,6 +118,39 @@ function IdbJS_install()
 
   function IDBIndex(name, objectStore, keyPath, optionalParameters)
   {
+    var records = {}
+
+    this._clear = function()
+    {
+      records = {}
+    }
+
+    this._delete = function(key)
+    {
+      for(var index in records)
+        if(records[index][keyPath] == key)
+          delete records[index]
+    }
+
+    this._put = function(value, key)
+    {
+      var path = value[keyPath]
+
+      if(optionalParameters.unique)
+      {
+        if(records[path])
+          throw DOMException("DataError")
+
+        records[path] = [key]
+      }
+      else
+      {
+        records[path] = records[path] || []
+
+        records[path].push(key)
+      }
+    }
+
     this.__defineGetter__("keyPath", function()
     {
       return keyPath
@@ -200,6 +233,29 @@ function IdbJS_install()
       return this.put(value, key)
     }
 
+    this.clear = function()
+    {
+      if(transaction.mode != "readonly")
+        throw DOMException("ReadOnlyError");
+
+      var request = new IDBRequest()
+
+      objects = {}
+      for(var name in indexes)
+        indexes[name]._clear()
+
+      return request
+    }
+
+    this.count = function(key)
+    {
+      var request = new IDBRequest(this)
+
+//       = Object.keys(objects).length
+
+      return request
+    }
+
     this.createIndex = function(name, keyPath, optionalParameters)
     {
       if(transaction.mode != "versionchange")
@@ -233,6 +289,8 @@ function IdbJS_install()
     this.delete = function(key)
     {
       delete objects[key]
+      for(var name in indexes)
+        indexes[name]._delete(key)
 
       return new IDBRequest()
     }
@@ -279,16 +337,22 @@ function IdbJS_install()
 
     this.put = function(value, key)
     {
+      if(transaction.mode == "readonly")
+        throw DOMException("ReadOnlyError");
+
       if(this.keyPath)
       {
         if(key)
-          throw DOMException
+          throw DOMException("DataError")
+
         key = value[this.keyPath]
       }
 
       if(!key)
-        throw DOMException
+        throw DOMException("DataError")
 
+      for(var name in indexes)
+        indexes[name]._put(value, key)
       objects[key] = value
 
       var request = new IDBRequest()
