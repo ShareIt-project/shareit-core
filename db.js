@@ -26,7 +26,7 @@ _priv.DB_init = function(onsuccess)
     {
       keyPath: ["sharedpoint", "path", "name"]
     });
-    files.createIndex("by_hash", "hash", {unique: true})
+    files.createIndex("by_hash", "hash", {unique: false})
   }
 
   var request = indexedDB.open('ShareIt', version);
