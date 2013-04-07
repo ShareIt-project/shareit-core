@@ -151,6 +151,16 @@ function IdbJS_install()
       }
     }
 
+    this.get = function(key)
+    {
+      var key = records[key][0]
+
+      var request = new IDBRequest()
+          request.result = objectStore.get(key).result
+
+      return request
+    }
+
     this.__defineGetter__("keyPath", function()
     {
       return keyPath
@@ -179,13 +189,6 @@ function IdbJS_install()
   IDBIndex.prototype =
   {
     count: function(key)
-    {
-      var request = new IDBRequest()
-
-      return request
-    },
-
-    get: function(key)
     {
       var request = new IDBRequest()
 

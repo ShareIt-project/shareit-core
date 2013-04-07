@@ -74,6 +74,8 @@ _priv.FilesManager = function(db, peersManager)
       console.error("Transfer begin: '" + fileentry.name + "' is already in database.");
     }
 
+    fileentry.sharedpoint = ""
+
     // Add a blob container to our file stub
     fileentry.blob = new Blob([''],
     {

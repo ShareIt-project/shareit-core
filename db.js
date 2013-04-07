@@ -297,7 +297,24 @@ _priv.DB_init = function(onsuccess)
      */
     db.files_get = function(key, callback)
     {
-      db._get('files', key, callback);
+//      db._get('files', key, callback);
+
+      var transaction = db.transaction('files', 'readonly');
+      var objectStore = transaction.objectStore('files');
+      var index = objectStore.index("by_hash");
+
+      var request = index.get(key);
+      if(callback)
+      {
+        request.onsuccess = function(event)
+        {
+          callback(null, request.result);
+        };
+        request.onerror = function(event)
+        {
+          callback(event.target.errorCode);
+        };
+      }
     };
 
     /**
