@@ -71,6 +71,7 @@ function IdbJS_install()
     }
   }
 
+
   /**
    * @constructor
    */
@@ -90,7 +91,7 @@ function IdbJS_install()
   /**
    * @constructor
    */
-  function IDBCursor()
+  function IDBCursor(source)
   {
     this._objects = []
     this._index = 0
@@ -114,16 +115,119 @@ function IdbJS_install()
     }
   }
 
+
+  function IDBIndex(name, objectStore, keyPath, optionalParameters)
+  {
+    this.__defineGetter__("keyPath", function()
+    {
+      return keyPath
+    })
+
+    this.__defineGetter__("multiEntry", function()
+    {
+      return Boolean(optionalParameters.multiEntry)
+    })
+
+    this.__defineGetter__("name", function()
+    {
+      return name
+    })
+
+    this.__defineGetter__("objectStore", function()
+    {
+      return objectStore
+    })
+
+    this.__defineGetter__("unique", function()
+    {
+      return Boolean(optionalParameters.unique)
+    })
+  }
+  IDBIndex.prototype =
+  {
+    count: function(key)
+    {
+      var request = new IDBRequest()
+
+      return request
+    },
+
+    get: function(key)
+    {
+      var request = new IDBRequest()
+
+      return request
+    },
+
+    getKey: function(key)
+    {
+      var request = new IDBRequest()
+
+      return request
+    },
+
+    openCursor: function(range, direction)
+    {
+      direction = direction || "next"
+
+      var cursor = new IDBCursor(this)
+      var request = new IDBRequest()
+
+      return request
+    },
+
+    openKeyCursor: function(range, direction)
+    {
+      direction = direction || "next"
+
+      var request = new IDBRequest()
+
+      return request
+    }
+  }
+
+
   /**
    * @constructor
    */
-  function IDBObjectStore()
+  function IDBObjectStore(name, keyPath, transaction, autoIncrement)
   {
     var objects = {}
+    var indexes = {}
 
     this.add = function(value, key)
     {
       return this.put(value, key)
+    }
+
+    this.createIndex = function(name, keyPath, optionalParameters)
+    {
+      if(transaction.mode != "versionchange")
+        throw DOMException("InvalidStateError");
+
+      if(indexes[name])
+        throw DOMException("ConstraintError");
+
+      optionalParameters = optionalParameters || {}
+
+      if(keyPath instanceOf Array)
+      {
+        if(optionalParameters.multiEntry)
+          throw DOMException("InvalidAccessError")
+
+        for(var i=0; i<keyPath.length; i++)
+          keyPath[i] = keyPath[i].toString()
+      }
+      else
+        keyPath = keyPath.toString()
+
+      var index = new IDBIndex(name, this, keyPath, optionalParameters)
+      indexes[name] = index
+
+//      if()
+//        transaction.abort()
+
+      return index
     }
 
     this.delete = function(key)
@@ -133,11 +237,25 @@ function IdbJS_install()
       return new IDBRequest()
     }
 
+    this.deleteIndex = function(indexName)
+    {
+      if(transaction.mode != "versionchange")
+        throw DOMException("InvalidStateError");
+
+      delete indexes[indexName]
+
+    }
+
     this.get = function(key)
     {
       var request = new IDBRequest()
           request.result = objects[key]
       return request
+    }
+
+    this.index = function(name)
+    {
+      return indexes[name]
     }
 
     this.openCursor = function(range)
@@ -178,18 +296,64 @@ function IdbJS_install()
 
       return request
     }
+
+    this.__defineGetter__("indexNames", function()
+    {
+      return Object.keys(indexes);
+    })
+    this.__defineGetter__("keyPath", function()
+    {
+      return keyPath
+    })
+
+    this.__defineGetter__("name", function()
+    {
+      return name
+    })
+
+    this.__defineGetter__("transaction", function()
+    {
+      return transaction
+    })
+
+    this.__defineGetter__("autoIncrement", function()
+    {
+      return autoIncrement
+    })
   }
+
 
   /**
    * @constructor
    */
-  function IDBTransaction()
+  function IDBTransaction(db, mode)
   {
+    this.abort = function()
+    {
+      
+    }
+
     this.objectStore = function(name)
     {
-      return this.db._stores[name]
+      return db._stores[name]
     }
+
+    this.__defineGetter__("db", function()
+    {
+      return db
+    })
+
+    this.__defineGetter__("error", function()
+    {
+      return error
+    })
+
+    this.__defineGetter__("mode", function()
+    {
+      return mode
+    })
   }
+
 
   function IDBDatabase()
   {
@@ -197,9 +361,9 @@ function IdbJS_install()
 
     this.createObjectStore = function(name, optionalParameters)
     {
-      var objectStore = new IDBObjectStore()
-      if(optionalParameters)
-        objectStore.keyPath = optionalParameters.keyPath
+      var keyPath = optionalParameters.keyPath
+
+      var objectStore = new IDBObjectStore(name, keyPath)
 
       this._stores[name] = objectStore
     }
@@ -213,10 +377,7 @@ function IdbJS_install()
 
     this.transaction = function(storeNames, mode)
     {
-      var result = new IDBTransaction()
-          result.db = this
-
-      return result
+      return new IDBTransaction(this, mode)
     }
   }
 
