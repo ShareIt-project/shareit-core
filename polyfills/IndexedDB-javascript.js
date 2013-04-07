@@ -258,15 +258,15 @@ function IdbJS_install()
 
     this.createIndex = function(name, keyPath, optionalParameters)
     {
-      if(transaction.mode != "versionchange")
-        throw DOMException("InvalidStateError");
+//      if(transaction.mode != "versionchange")
+//        throw DOMException("InvalidStateError");
 
       if(indexes[name])
         throw DOMException("ConstraintError");
 
-      optionalParameters = optionalParameters || {}
+      optionalParameters = optionalParameters || {};
 
-      if(keyPath instanceOf Array)
+      if(keyPath instanceof Array)
       {
         if(optionalParameters.multiEntry)
           throw DOMException("InvalidAccessError")
@@ -337,15 +337,49 @@ function IdbJS_install()
 
     this.put = function(value, key)
     {
-      if(transaction.mode == "readonly")
-        throw DOMException("ReadOnlyError");
+//      if(transaction.mode == "readonly")
+//        throw DOMException("ReadOnlyError");
 
       if(this.keyPath)
       {
         if(key)
           throw DOMException("DataError")
 
-        key = value[this.keyPath]
+        function extract_key_from_value_using_keyPath(value, keyPath)
+        {
+          if(keyPath instanceof Array)
+          {
+            var result = []
+
+            for(var i=0,item; item=keyPath[i]; i++)
+            {
+              var result2 = extract_key_from_value_using_keyPath(value, item)
+              if(result2 == undefined)
+                return
+
+              result.push(result2)
+            }
+
+            return result
+          }
+
+          if(keyPath == "")
+            return value
+
+          var keyPath = keyPath.split(".")
+
+          for(var i=0, identifier; identifier=keyPath[i]; i++)
+          {
+            var aux = value[identifier]
+            if(aux == undefined)
+              return
+            value = aux
+          }
+
+          return value
+        }
+
+        key = extract_key_from_value_using_keyPath(value, this.keyPath)
       }
 
       if(!key)
@@ -356,7 +390,7 @@ function IdbJS_install()
       objects[key] = value
 
       var request = new IDBRequest()
-          request.result = objects[key]
+          request.result = value
 
       return request
     }
@@ -426,10 +460,22 @@ function IdbJS_install()
     this.createObjectStore = function(name, optionalParameters)
     {
       var keyPath = optionalParameters.keyPath
+      var autoIncrement = optionalParameters.autoIncrement
+
+      if(autoIncrement && (keyPath == "" || keyPath instanceof Array))
+        throw InvalidAccessError
+
+      if(keyPath instanceof Array)
+        for(var i=0; i<keyPath.length; i++)
+          keyPath[i] = keyPath[i].toString()
+      else
+        keyPath = keyPath.toString()
 
       var objectStore = new IDBObjectStore(name, keyPath)
 
       this._stores[name] = objectStore
+
+      return objectStore
     }
 
     this.setVersion = function(version)

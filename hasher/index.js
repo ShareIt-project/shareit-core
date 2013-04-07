@@ -62,6 +62,8 @@ _priv.Hasher = function(db, policy, sharedpointsManager)
 
     function addFile(fileentry)
     {
+      fileentry.name = fileentry.file.name
+
       db.files_put(fileentry, function(error, result)
       {
         if(error)

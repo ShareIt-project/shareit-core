@@ -22,10 +22,11 @@ _priv.DB_init = function(onsuccess)
     // Create an objectStore to hold information about the shared files.
     // We're going to use "hash" as our key path because it's guaranteed to
     // be unique.
-    db.createObjectStore('files',
+    var files = db.createObjectStore('files',
     {
-      keyPath: 'hash'
+      keyPath: ["sharedpoint", "path", "name"]
     });
+    files.createIndex("by_hash", "hash", {unique: true})
   }
 
   var request = indexedDB.open('ShareIt', version);
