@@ -68,7 +68,7 @@ function expose(name, service)
   }
 }
 
-var core = new shareit.Local(function(core)
+var core = new shareit.Local(null, function(core)
 {
   expose(core)
 })

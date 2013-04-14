@@ -1,7 +1,7 @@
 var shareit = (function(module, webp2p){
 var _priv = module._priv = module._priv || {}
 
-module.Local = function(onsuccess)
+module.Local = function(handshake_servers_file, onsuccess)
 {
   EventTarget.call(this);
 
@@ -14,7 +14,7 @@ module.Local = function(onsuccess)
   }
 
 
-  var peersManager = new webp2p.PeersManager()
+  var peersManager = new webp2p.PeersManager(handshake_servers_file)
 
   // Init database
   _priv.DB_init(function(db)
