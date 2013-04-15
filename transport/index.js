@@ -1,4 +1,4 @@
-var webp2p = (function(module){
+var shareit = (function(module){
 var _priv = module._priv = module._priv || {}
 
 /**
@@ -35,4 +35,4 @@ _priv.Transport_init = function(transport)
 }
 
 return module
-})(webp2p || {})
+})(shareit || {})
