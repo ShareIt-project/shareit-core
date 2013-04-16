@@ -62,6 +62,7 @@ _priv.Hasher = function(db, policy, sharedpointsManager)
 
     function addFile(fileentry)
     {
+      fileentry.peer = ""  // File is shared by us
       fileentry.name = fileentry.file.name
 
       db.files_put(fileentry, function(error, result)

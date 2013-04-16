@@ -24,9 +24,10 @@ _priv.DB_init = function(onsuccess)
     // be unique.
     var files = db.createObjectStore('files',
     {
-      keyPath: ["sharedpoint", "path", "name"]
+      keyPath: ["peer", "sharedpoint", "path", "name"]
     });
     files.createIndex("by_hash", "hash", {unique: false})
+    files.createIndex("by_peer", "peer", {unique: false})
   }
 
   var request = indexedDB.open('ShareIt', version);
