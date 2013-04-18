@@ -91,7 +91,7 @@ function IdbJS_install()
   /**
    * @constructor
    */
-  function IDBCursor(source)
+  function IDBCursor(source, direction)
   {
     this._objects = []
     this._index = 0
@@ -153,10 +153,60 @@ function IdbJS_install()
 
     this.get = function(key)
     {
-      var key = records[key][0]
+      var request = this.getKey(key)
+          request.result = objectStore.get(request.result).result
+
+      return request
+    }
+
+    this.getKey = function(key)
+    {
+      var request = new IDBRequest()
+          request.result = records[key][0]
+
+      return request
+    }
+
+    this.openCursor = function(range, direction)
+    {
+      var request = this.openKeyCursor(range, direction)
+
+      var cursor = request.target.result
+      if(cursor)
+        for(var i=0, ref; ref=cursor._objects[i]; i++)
+          cursor._objects[i] = objectStore.get(ref).result
+
+      return request
+    }
+
+    this.openKeyCursor = function(range, direction)
+    {
+      direction = direction || "next"
 
       var request = new IDBRequest()
-          request.result = objectStore.get(key).result
+
+      if(Object.keys(records).length)
+      {
+        // Fill the cursor with the objectstore objects
+        var cursor = new IDBCursor(null, direction)
+
+        function addKeys(key)
+        {
+          for(var i=0, ref; ref=records[key][i]; i++)
+            cursor._objects.push(ref)
+        }
+
+        if(range)
+          addKeys(range)
+
+        else
+          for(var key in records)
+            addKeys(key)
+
+        // Link the request and the cursor between them
+        request.target.result = cursor
+        cursor._request = request
+      }
 
       return request
     }
@@ -190,32 +240,6 @@ function IdbJS_install()
   {
     count: function(key)
     {
-      var request = new IDBRequest()
-
-      return request
-    },
-
-    getKey: function(key)
-    {
-      var request = new IDBRequest()
-
-      return request
-    },
-
-    openCursor: function(range, direction)
-    {
-      direction = direction || "next"
-
-      var cursor = new IDBCursor(this)
-      var request = new IDBRequest()
-
-      return request
-    },
-
-    openKeyCursor: function(range, direction)
-    {
-      direction = direction || "next"
-
       var request = new IDBRequest()
 
       return request
