@@ -86,7 +86,7 @@ _priv.CacheBackup = function(db, filesManager)
         // Extract blobs data and add it to cache
         var files = JSON.parse(text);
         for(var i = 0, file; file = files[i]; i++)
-          db.files_get(file.hash, function(error, fileentry)
+          db.files_get_byHash(file.hash, function(error, fileentry)
           {
             if(error)
             {

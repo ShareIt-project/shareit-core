@@ -141,7 +141,7 @@ _priv.Transport_Host_init = function(transport, db)
     var start = chunk * module.chunksize;
     var stop = start + module.chunksize;
 
-    db.files_get(hash, function(error, fileentry)
+    db.files_get_byHash(hash, function(error, fileentry)
     {
       if(error)
       {

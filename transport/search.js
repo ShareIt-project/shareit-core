@@ -34,7 +34,7 @@ _priv.Transport_Search_init = function(transport, db, peersManager)
         return;
 
       // Search hashes on own files
-      db.files_get(hashes, function(error, fileslist)
+      db.files_get_byHash(hashes, function(error, fileslist)
       {
 
       });
