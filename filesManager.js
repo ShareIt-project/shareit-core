@@ -336,9 +336,30 @@ _priv.FilesManager = function(db, peersManager)
       {
         var sharing = []
 
+        // [ToDo] Use parallice
         for(var i=0, fileentry; fileentry=filelist[i]; i++)
           if(!fileentry.bitmap)
-            sharing.push(fileentry)
+            db.files_getAll_byHash(fileentry.hash, function(error, fileentries)
+            {
+              if(fileentries.length)
+              {
+                var duplicates = []
+
+                for(var i=0, entry; entry=fileentries[i]; i++)
+                {
+                  if(fileentry.peer != entry.peer
+                  || fileentry.sharedpoint != entry.sharedpoint
+                  || fileentry.path != entry.path
+                  || fileentry.name != entry.name)
+                    duplicates.push(entry.name)
+                }
+
+                if(duplicates.length)
+                  fileentry.duplicates = duplicates
+              }
+
+              sharing.push(fileentry)
+            })
 
         // Update Sharing files list
         cb(null, sharing)
