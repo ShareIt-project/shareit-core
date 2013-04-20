@@ -346,13 +346,36 @@ _priv.FilesManager = function(db, peersManager)
                 var duplicates = []
 
                 for(var i=0, entry; entry=fileentries[i]; i++)
-                {
                   if(fileentry.peer != entry.peer
                   || fileentry.sharedpoint != entry.sharedpoint
                   || fileentry.path != entry.path
                   || fileentry.name != entry.name)
-                    duplicates.push(entry.name)
-                }
+                  {
+                    var fullpath = ""
+
+                    // Peer
+                    if(entry.peer)
+                      fullpath += '['+entry.peer+']'
+
+                    // Sharedpoint
+                    if(entry.sharedpoint)
+                      fullpath += '/'+entry.sharedpoint
+
+                    // Path
+                    if(entry.path)
+                    {
+                      if(fullpath)
+                         fullpath += '/'
+                      fullpath += entry.path
+                    }
+
+                    // Name
+                    if(fullpath)
+                       fullpath += '/'
+                    fullpath += entry.name
+
+                    duplicates.push(fullpath)
+                  }
 
                 if(duplicates.length)
                   fileentry.duplicates = duplicates
