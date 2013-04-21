@@ -18,17 +18,25 @@ _priv.FilesManager = function(db, peersManager)
   /**
    * Get the channel of one of the peers that have the file from its hash.
    * 
-   * Since the tracker system is currently not implemented we'll get just the
-   * channel of the peer where we got the file
-   * 
    * @param {Fileentry} Fileentry of the file to be downloaded.
    * @return {RTCDataChannel} Channel where we can ask for data of the file.
    */
-  function getChannel(fileentry)
+  function getChannel(hash, cb)
   {
-    var channels = peersManager.getChannels()
+    db.files_getAll_byHash(hash, function(error, fileentries)
+    {
+      for(var i=0, fileentry; fileentry=fileentries[i]; i++)
+        if(fileentry.peer != "")
+        {
+          var channels = peersManager.getChannels()
 
-    return channels[fileentry.peer];
+          cb(null, channels[fileentry.peer]);
+
+          return
+        }
+
+      cb("No available peers to finish downloading the file");
+    })
   }
 
   /**
@@ -37,10 +45,18 @@ _priv.FilesManager = function(db, peersManager)
    */
   function transfer_query(fileentry)
   {
-    var channel = getChannel(fileentry);
-    var chunk = fileentry.bitmap.getRandom(false);
+    getChannel(fileentry.hash, function(error, channel)
+    {
+      if(error)
+        console.error(error)
 
-    channel.transfer_query(fileentry, chunk);
+      else
+      {
+        var chunk = fileentry.bitmap.getRandom(false);
+
+        channel.transfer_query(fileentry, chunk);
+      }
+    });
   }
 
 
@@ -79,6 +95,9 @@ _priv.FilesManager = function(db, peersManager)
       console.error("Transfer begin: '" + fileentry.name + "' is already in database.");
     }
 
+    // Set the fileentry as owned by us so it creates a new entry
+    delete fileentry.duplicates
+    fileentry.peer = ""
     fileentry.sharedpoint = ""
 
     // Add a blob container to our file stub
@@ -330,7 +349,7 @@ _priv.FilesManager = function(db, peersManager)
 
   this.files_sharing = function(cb)
   {
-    db.files_getAll(null, function(error, filelist)
+    db.files_getAll_byPeer("", function(error, filelist)
     {
       if(error)
         console(error)
@@ -344,45 +363,39 @@ _priv.FilesManager = function(db, peersManager)
           if(!fileentry.bitmap)
             db.files_getAll_byHash(fileentry.hash, function(error, fileentries)
             {
-              if(fileentries.length)
-              {
-                var duplicates = []
+              var duplicates = []
 
-                for(var i=0, entry; entry=fileentries[i]; i++)
-                  if(fileentry.peer != entry.peer
-                  || fileentry.sharedpoint != entry.sharedpoint
-                  || fileentry.path != entry.path
-                  || fileentry.name != entry.name)
+              // Only add local (shared) duplicates
+              for(var i=0, entry; entry=fileentries[i]; i++)
+                if(fileentry.peer        == entry.peer
+                &&(fileentry.sharedpoint != entry.sharedpoint
+                || fileentry.path        != entry.path
+                || fileentry.name        != entry.name))
+                {
+                  var fullpath = ""
+
+                  // Sharedpoint
+                  if(entry.sharedpoint)
+                    fullpath += entry.sharedpoint
+
+                  // Path
+                  if(entry.path)
                   {
-                    var fullpath = ""
-
-                    // Peer
-                    if(entry.peer)
-                      fullpath += '['+entry.peer+']'
-
-                    // Sharedpoint
-                    if(entry.sharedpoint)
-                      fullpath += '/'+entry.sharedpoint
-
-                    // Path
-                    if(entry.path)
-                    {
-                      if(fullpath)
-                         fullpath += '/'
-                      fullpath += entry.path
-                    }
-
-                    // Name
                     if(fullpath)
                        fullpath += '/'
-                    fullpath += entry.name
-
-                    duplicates.push(fullpath)
+                    fullpath += entry.path
                   }
 
-                if(duplicates.length)
-                  fileentry.duplicates = duplicates
-              }
+                  // Name
+                  if(fullpath)
+                     fullpath += '/'
+                  fullpath += entry.name
+
+                  duplicates.push(fullpath)
+                }
+
+              if(duplicates.length)
+                fileentry.duplicates = duplicates
 
               sharing.push(fileentry)
             })

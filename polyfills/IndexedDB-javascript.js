@@ -196,7 +196,7 @@ function IdbJS_install()
             cursor._objects.push(ref)
         }
 
-        if(range)
+        if(range != undefined)
           addKeys(range)
 
         else
