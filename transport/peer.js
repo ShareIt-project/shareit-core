@@ -10,33 +10,32 @@ var _priv = module._priv = module._priv || {}
  */
 _priv.Transport_Peer_init = function(transport, db, filesManager)
 {
-  /**
-   * Check if we already have the file and set it references to our copy
-   * @param {Fileentry} fileentry {Fileentry} to be checked.
-   * @param {Array} fileslist List of {Fileentry}s.
-   */
-
-  function check_ifOwned(fileentry, fileslist)
-  {
-    // We add here ad-hoc the channel of the peer where we got
-    // the file since we currently don't have support for hashes
-    // nor tracker systems
-    fileentry.channel = transport;
-
-    // Check if we have the file already, and if so set it our copy
-    // bitmap and blob reference
-    for(var j = 0, file_hosted; file_hosted = fileslist[j]; j++)
-      if(fileentry.hash == file_hosted.hash)
-      {
-        fileentry.bitmap = file_hosted.bitmap;
-        fileentry.blob = file_hosted.file || file_hosted.blob;
-
-        break;
-      }
-  }
-
-  // fileslist
-  var _fileslist = [];
+//  /**
+//   * Check if we already have the file and set it references to our copy
+//   * @param {Fileentry} fileentry {Fileentry} to be checked.
+//   * @param {Array} fileslist List of {Fileentry}s.
+//   */
+//  function check_ifOwned(fileentry, fileslist)
+//  {
+//    // We add here ad-hoc the channel of the peer where we got
+//    // the file since we currently don't have support for hashes
+//    // nor tracker systems
+//    fileentry.channel = transport;
+//
+//    // Check if we have the file already, and if so set it our copy
+//    // bitmap and blob reference
+//    for(var j = 0, file_hosted; file_hosted = fileslist[j]; j++)
+//      if(fileentry.hash == file_hosted.hash)
+//      {
+//        fileentry.bitmap = file_hosted.bitmap;
+//        fileentry.blob = file_hosted.file || file_hosted.blob;
+//
+//        break;
+//      }
+//  }
+//
+//  // fileslist
+//  var _fileslist = [];
 
   /**
    * Catch new sended data for the other peer fileslist
@@ -45,29 +44,29 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
   {
     var fileentries = event.data[0];
 
-    // Check if we have already any of the files
-    // It's stupid to try to download it... and also give errors
-    db.files_getAll(null, function(error, fileslist)
+    // Update the fileslist for this peer
+    db.files_getAll_byPeer(transport.uid, function(error, keys)
     {
-      if(error)
-      {
-        console.error(error)
-        return
-      }
+      // Remove old peer fileslist
+      for(var i = 0, key; key = keys[i]; i++)
+        db.files_delete(key)
 
+      // Set new fileslist for this peer
       for(var i = 0, fileentry; fileentry = fileentries[i]; i++)
-        check_ifOwned(fileentry, fileslist);
+      {
+        fileentry.peer = transport.uid
+        fileentry.sharedpoint = ""
 
-      // Update the peer's fileslist with the checked data
-      _fileslist = fileentries;
+        db.files_add(fileentry)
+      }
 
       // Notify about fileslist update
       var event = document.createEvent("Event");
           event.initEvent('fileslist._updated',true,true);
-          event.fileslist = _fileslist
+          event.fileslist = fileentries
 
       transport.dispatchEvent(event);
-    });
+    })
   });
 
   /**
@@ -94,34 +93,19 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
   transport.addEventListener('fileslist.added', function(event)
   {
     var fileentry = event.data[0];
+        fileentry.peer = transport.uid
 
-    // Check if we have the file previously listed
-    for(var i = 0, listed; listed = _fileslist[i]; i++)
-      if(fileentry.path == listed.path
-      && fileentry.name == listed.name)
-        return;
+    db.files_put(fileentry, function(error)
+    {
+      // Check if we have already the file from this peer in the index
 
-      // Check if we have already the files
-      db.files_getAll(null, function(error, fileslist)
-      {
-        if(error)
-        {
-          console.error(error)
-          return
-        }
+      // Notify about fileslist update
+      var event = document.createEvent("Event");
+          event.initEvent('fileslist._updated',true,true);
+          event.fileslist = _fileslist
 
-        check_ifOwned(fileentry, fileslist);
-
-        // Add the fileentry to the fileslist
-        _fileslist.push(fileentry);
-
-        // Notify about fileslist update
-        var event = document.createEvent("Event");
-            event.initEvent('fileslist._updated',true,true);
-            event.fileslist = _fileslist
-
-        transport.dispatchEvent(event);
-      });
+      transport.dispatchEvent(event);
+    })
   });
 
   /**
@@ -130,24 +114,18 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
   transport.addEventListener('fileslist.deleted', function(event)
   {
     var fileentry = event.data[0];
+        fileentry.peer = transport.uid
 
-    // Search for the fileentry on the fileslist
-    for(var i = 0, listed; listed = _fileslist[i]; i++)
-      if(fileentry.path == listed.path
-      && fileentry.name == listed.name)
-      {
-        // Remove the fileentry for the fileslist
-        _fileslist.splice(i, 1);
+    // Remove the fileentry for the fileslist
+    db.files_delete(fileentry, function(error)
+    {
+      // Notify about fileslist update
+      var event = document.createEvent("Event");
+          event.initEvent('fileslist._updated',true,true);
+          event.fileslist = _fileslist
 
-        // Notify about fileslist update
-        var event = document.createEvent("Event");
-            event.initEvent('fileslist._updated',true,true);
-            event.fileslist = _fileslist
-
-        transport.dispatchEvent(event);
-
-        return;
-      }
+      transport.dispatchEvent(event);
+    })
   });
 
 
@@ -157,9 +135,9 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
    */
   transport.addEventListener('transfer.send', function(event)
   {
-    var hash = event.data[0];
+    var hash  = event.data[0];
     var chunk = parseInt(event.data[1]);
-    var data = event.data[2];
+    var data  = event.data[2];
 
     // Fix back data transmited as UTF-8 to binary
     var byteArray = new Uint8Array(data.length);
@@ -168,7 +146,7 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
 
     data = byteArray;
 
-    db.files_get(hash, function(error, fileentry)
+    db.files_get_byHash(hash, function(error, fileentry)
     {
       if(error)
         console.error(error)

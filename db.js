@@ -356,15 +356,24 @@ _priv.DB_init = function(onsuccess)
 
     db.files_getAll_byPeer = function(uid, callback)
     {
+      var result = []
+
       var transaction = db.transaction('files', 'readonly');
       var objectStore = transaction.objectStore('files');
       var index = objectStore.index("byPeer");
 
-      var request = index.openCursor(key);
+      var request = index.openCursor(uid);
 
       request.onsuccess = function(event)
       {
-        callback(null, request.result);
+        var cursor = event.target.result;
+        if(cursor)
+        {
+          result.push(cursor.value);
+          cursor.continue();
+        }
+        else
+          callback(null, result);
       };
       request.onerror = function(event)
       {
