@@ -17,11 +17,6 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
 //   */
 //  function check_ifOwned(fileentry, fileslist)
 //  {
-//    // We add here ad-hoc the channel of the peer where we got
-//    // the file since we currently don't have support for hashes
-//    // nor tracker systems
-//    fileentry.channel = transport;
-//
 //    // Check if we have the file already, and if so set it our copy
 //    // bitmap and blob reference
 //    for(var j = 0, file_hosted; file_hosted = fileslist[j]; j++)

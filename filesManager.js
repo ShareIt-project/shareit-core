@@ -17,15 +17,18 @@ _priv.FilesManager = function(db, peersManager)
 
   /**
    * Get the channel of one of the peers that have the file from its hash.
-   * Since the hash and the tracker system are currently not implemented we'll
-   * get just the channel of the peer where we got the file that we added
-   * ad-hoc before
+   * 
+   * Since the tracker system is currently not implemented we'll get just the
+   * channel of the peer where we got the file
+   * 
    * @param {Fileentry} Fileentry of the file to be downloaded.
    * @return {RTCDataChannel} Channel where we can ask for data of the file.
    */
   function getChannel(fileentry)
   {
-    return fileentry.channel;
+    var channels = peersManager.getChannels()
+
+    return channels[fileentry.peer];
   }
 
   /**
