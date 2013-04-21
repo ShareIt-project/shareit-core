@@ -60,6 +60,53 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
         db.files_add(fileentry)
       }
 
+      // [ToDo] Use parallize
+      for(var i = 0, fileentry; fileentry = fileentries[i]; i++)
+        if(!fileentry.bitmap)
+          db.files_getAll_byHash(fileentry.hash,
+          function(error, fileentries)
+          {
+            if(fileentries.length)
+            {
+              var duplicates = []
+
+              for(var i=0, entry; entry=fileentries[i]; i++)
+                if(fileentry.peer != entry.peer
+                || fileentry.sharedpoint != entry.sharedpoint
+                || fileentry.path != entry.path
+                || fileentry.name != entry.name)
+                {
+                  var fullpath = ""
+
+                  // Peer
+                  if(entry.peer)
+                    fullpath += '['+entry.peer+']'
+
+                  // Sharedpoint
+                  if(entry.sharedpoint)
+                    fullpath += '/'+entry.sharedpoint
+
+                  // Path
+                  if(entry.path)
+                  {
+                    if(fullpath)
+                       fullpath += '/'
+                    fullpath += entry.path
+                  }
+
+                  // Name
+                  if(fullpath)
+                     fullpath += '/'
+                  fullpath += entry.name
+
+                  duplicates.push(fullpath)
+                }
+
+              if(duplicates.length)
+                fileentry.duplicates = duplicates
+            }
+          })
+
       // Notify about fileslist update
       var event = document.createEvent("Event");
           event.initEvent('fileslist._updated',true,true);
