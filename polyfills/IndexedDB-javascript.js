@@ -134,21 +134,34 @@ function IdbJS_install()
 
     this._put = function(value, key)
     {
+      function put(path, key)
+      {
+        if(optionalParameters.unique)
+        {
+          if(records[path])
+            throw DOMException("DataError")
+
+          records[path] = [key]
+        }
+        else
+        {
+          records[path] = records[path] || []
+
+          records[path].push(key)
+          records[path].sort()
+        }
+      }
+
       var path = value[keyPath]
 
-      if(optionalParameters.unique)
+      if(path instanceof Array
+      && optionalParameters.multiEntry)
       {
-        if(records[path])
-          throw DOMException("DataError")
-
-        records[path] = [key]
+        for(var i=0, record; record=path[0]; i++)
+          put(record, key)
       }
       else
-      {
-        records[path] = records[path] || []
-
-        records[path].push(key)
-      }
+        put(path, key)
     }
 
     this.get = function(key)
