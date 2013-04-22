@@ -188,13 +188,23 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
 
     data = byteArray;
 
-    db.files_get_byHash(hash, function(error, fileentry)
+    db.files_getAll_byHash(hash, function(error, fileentries)
     {
       if(error)
         console.error(error)
 
+      else if(fileentries.length)
+      {
+        for(var i=0, fileentry; fileentry=fileentries[i]; i++)
+          if(fileentry.blob)
+          {
+            filesManager.updateFile(fileentry, chunk, data);
+            return
+          }
+      }
+
       else
-        filesManager.updateFile(fileentry, chunk, data);
+        console.warn("We are not downloading file "+hash)
     });
   });
 

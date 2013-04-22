@@ -86,7 +86,7 @@ _priv.CacheBackup = function(db, filesManager)
         // Extract blobs data and add it to cache
         var files = JSON.parse(text);
         for(var i = 0, file; file = files[i]; i++)
-          db.files_get_byHash(file.hash, function(error, fileentry)
+          db.files_getAll_byHash(file.hash, function(error, fileentries)
           {
             if(error)
             {
@@ -96,7 +96,7 @@ _priv.CacheBackup = function(db, filesManager)
 
             var blob = blobs.getChildByName(file.hash);
 
-            function fileentry_update(file)
+            function fileentry_update(file, fileentry)
             {
               // Fileentry is completed, do nothing
               if(fileentry.bitmap == undefined)
@@ -170,8 +170,12 @@ _priv.CacheBackup = function(db, filesManager)
             }
 
             // Fileentry exists on cache
-            if(fileentry)
-              fileentry_update(file);
+            if(fileentries.length)
+            {
+              for(var i=0, fileentry; fileentry=fileentries[i]; i++)
+                if(fileentry.blob)
+                  fileentry_update(file, fileentry);
+            }
 
           // Fileentry don't exists on cache, add it
             else

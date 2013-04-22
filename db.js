@@ -289,32 +289,6 @@ _priv.DB_init = function(onsuccess)
     };
 
     /**
-     * Get a {Fileentry}
-     * @param {String} key {Fileentry} to be gotten.
-     * @param {Function} onsuccess Callback called when the {Fileentry}
-     * was gotten.
-     * @param {Function} onerror Callback called when the {Fileentry}
-     * was not able to be gotten.
-     */
-    db.files_get_byHash = function(key, callback)
-    {
-      var transaction = db.transaction('files', 'readonly');
-      var objectStore = transaction.objectStore('files');
-      var index = objectStore.index("byHash");
-
-      var request = index.get(key);
-
-      request.onsuccess = function(event)
-      {
-        callback(null, request.result);
-      };
-      request.onerror = function(event)
-      {
-        callback(event.target.errorCode);
-      };
-    };
-
-    /**
      * Get all the {Fileentry}s
      * @param {?IDBRange} range Range of {Fileentry}s to be gotten.
      * @param {Function} onsuccess Callback called when the {Fileentry}s
