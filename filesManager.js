@@ -95,13 +95,18 @@ _priv.FilesManager = function(db, peersManager)
       console.error("Transfer begin: '" + fileentry.name + "' is already in database.");
     }
 
-    // Set the fileentry as owned by us so it creates a new entry
-    delete fileentry.duplicates
-    fileentry.peer = ""
-    fileentry.sharedpoint = ""
+    // Create a new fileentry
+    var new_fileentry =
+    {
+      peer: "",
+      sharedpoint: "",
+      path: fileentry.path,
+      name: fileentry.name,
+      hash: fileentry.hash
+    }
 
     // Add a blob container to our file stub
-    fileentry.blob = new Blob([''],
+    new_fileentry.blob = new Blob([''],
     {
       'type': fileentry.type
     });
@@ -110,7 +115,7 @@ _priv.FilesManager = function(db, peersManager)
     if(!fileentry.size)
     {
       // Insert new empty "file" inside IndexedDB
-      db.files_add(fileentry, function(error, fileentry)
+      db.files_add(new_fileentry, function(error, fileentry)
       {
         if(error)
           onerror(error)
@@ -128,10 +133,10 @@ _priv.FilesManager = function(db, peersManager)
     if(chunks % 1 != 0)
        chunks = Math.floor(chunks) + 1;
 
-    fileentry.bitmap = new Bitmap(chunks);
+    new_fileentry.bitmap = new Bitmap(chunks);
 
     // Insert new "file" inside IndexedDB
-    db.files_add(fileentry, function(error, fileentry)
+    db.files_add(new_fileentry, function(error, fileentry)
     {
       if(error)
         onerror(error)
@@ -152,7 +157,7 @@ _priv.FilesManager = function(db, peersManager)
 
   this.transfer_update = function(fileentry, pending_chunks)
   {
-    var chunks = fileentry.size / module.chunksize;
+    var chunks = fileentry.blob.size / module.chunksize;
     if(chunks % 1 != 0)
        chunks = Math.floor(chunks) + 1;
 
