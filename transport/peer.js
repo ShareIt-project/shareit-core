@@ -28,9 +28,6 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
 //        break;
 //      }
 //  }
-//
-//  // fileslist
-//  var _fileslist = [];
 
   /**
    * Catch new sended data for the other peer fileslist
@@ -40,11 +37,17 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
     var fileentries = event.data[0];
 
     // Update the fileslist for this peer
-    db.files_getAll_byPeer(transport.uid, function(error, keys)
+    db.files_getAll_byPeer(transport.uid, function(error, fileslist)
     {
       // Remove old peer fileslist
-      for(var i = 0, key; key = keys[i]; i++)
+      for(var i = 0, fileentry; fileentry = fileslist[i]; i++)
+      {
+        var key = [fileentry.peer,
+                   fileentry.sharedpoint,
+                   fileentry.path,
+                   fileentry.name]
         db.files_delete(key)
+      }
 
       // Set new fileslist for this peer
       for(var i = 0, fileentry; fileentry = fileentries[i]; i++)
@@ -136,17 +139,23 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
   {
     var fileentry = event.data[0];
         fileentry.peer = transport.uid
+        fileentry.sharedpoint = ""
 
     db.files_put(fileentry, function(error)
     {
-      // Check if we have already the file from this peer in the index
+      // [ToDo] Check if we have already the file from this peer in the index so
+      // we don't dispatch the event twice
 
       // Notify about fileslist update
       var event = document.createEvent("Event");
           event.initEvent('fileslist._updated',true,true);
-          event.fileslist = _fileslist
 
-      transport.dispatchEvent(event);
+      db.files_getAll_byPeer(transport.uid, function(error, fileslist)
+      {
+        event.fileslist = fileslist
+
+        transport.dispatchEvent(event);
+      })
     })
   });
 
@@ -164,9 +173,13 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
       // Notify about fileslist update
       var event = document.createEvent("Event");
           event.initEvent('fileslist._updated',true,true);
-          event.fileslist = _fileslist
 
-      transport.dispatchEvent(event);
+      db.files_getAll_byPeer(transport.uid, function(error, fileslist)
+      {
+        event.fileslist = fileslist
+
+        transport.dispatchEvent(event);
+      })
     })
   });
 

@@ -354,7 +354,7 @@ _priv.FilesManager = function(db, peersManager)
 
   this.files_sharing = function(cb)
   {
-    db.files_getAll_byPeer("", function(error, filelist)
+    db.files_getAll_byPeer("", function(error, fileslist)
     {
       if(error)
         console(error)
@@ -364,7 +364,7 @@ _priv.FilesManager = function(db, peersManager)
         var sharing = []
 
         // [ToDo] Use parallice
-        for(var i=0, fileentry; fileentry=filelist[i]; i++)
+        for(var i=0, fileentry; fileentry=fileslist[i]; i++)
           if(!fileentry.bitmap)
             db.files_getAll_byHash(fileentry.hash, function(error, fileentries)
             {
