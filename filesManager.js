@@ -376,28 +376,7 @@ _priv.FilesManager = function(db, peersManager)
                 &&(fileentry.sharedpoint != entry.sharedpoint
                 || fileentry.path        != entry.path
                 || fileentry.name        != entry.name))
-                {
-                  var fullpath = ""
-
-                  // Sharedpoint
-                  if(entry.sharedpoint)
-                    fullpath += entry.sharedpoint
-
-                  // Path
-                  if(entry.path)
-                  {
-                    if(fullpath)
-                       fullpath += '/'
-                    fullpath += entry.path
-                  }
-
-                  // Name
-                  if(fullpath)
-                     fullpath += '/'
-                  fullpath += entry.name
-
-                  duplicates.push(fullpath)
-                }
+                  duplicates.push(entry)
 
               if(duplicates.length)
                 fileentry.duplicates = duplicates

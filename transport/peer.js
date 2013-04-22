@@ -69,36 +69,11 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
               var duplicates = []
 
               for(var i=0, entry; entry=fileentries[i]; i++)
-                if(fileentry.peer != entry.peer
+                if(fileentry.peer        != entry.peer
                 || fileentry.sharedpoint != entry.sharedpoint
-                || fileentry.path != entry.path
-                || fileentry.name != entry.name)
-                {
-                  var fullpath = ""
-
-                  // Peer
-                  if(entry.peer)
-                    fullpath += '['+entry.peer+']'
-
-                  // Sharedpoint
-                  if(entry.sharedpoint)
-                    fullpath += '/'+entry.sharedpoint
-
-                  // Path
-                  if(entry.path)
-                  {
-                    if(fullpath)
-                       fullpath += '/'
-                    fullpath += entry.path
-                  }
-
-                  // Name
-                  if(fullpath)
-                     fullpath += '/'
-                  fullpath += entry.name
-
-                  duplicates.push(fullpath)
-                }
+                || fileentry.path        != entry.path
+                || fileentry.name        != entry.name)
+                  duplicates.push(entry)
 
               if(duplicates.length)
                 fileentry.duplicates = duplicates
