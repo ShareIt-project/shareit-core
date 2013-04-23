@@ -66,7 +66,15 @@ _priv.SearchEngine = function(db)
         })
 
       else
+      {
+        // Sort the results on score descending relevance
+        results.sort(function(a,b)
+        {
+          return b.score - a.score
+        })
+
         callback(null, results)
+      }
     }
 
     data()
