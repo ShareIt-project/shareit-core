@@ -19,6 +19,7 @@ module.Local = function(handshake_servers_file, onsuccess)
   // Init database
   _priv.DB_init(function(db)
   {
+    // Init files manager
     var filesManager = new _priv.FilesManager(db, peersManager)
 
     // Init cache backup system
@@ -26,6 +27,9 @@ module.Local = function(handshake_servers_file, onsuccess)
 
     // Init sharedpoints manager
     var sharedpointsManager = new _priv.SharedpointsManager(db, filesManager)
+
+    // Init search engine
+    var searchEngine = new _priv.SearchEngine(db)
 
 
     self.cacheBackup_export = function(onfinish, onprogress, onerror)

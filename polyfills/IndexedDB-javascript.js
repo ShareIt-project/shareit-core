@@ -410,6 +410,7 @@ function IdbJS_install()
 //      if(transaction.mode != "versionchange")
 //        throw DOMException("InvalidStateError");
 
+      // an index with the same name already exists in the object store
       if(indexes[name])
         throw DOMException("ConstraintError");
 

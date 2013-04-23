@@ -43,6 +43,7 @@ shareit.load(
  'db',
  'filesManager',
  'utils',
+ 'searchEngine',
  'shareitLocal',
  'shareitRemote',
 
@@ -50,6 +51,7 @@ shareit.load(
 
  'lib/BoolArray',
  'lib/dropbox.min',
+ 'lib/lunr.min',
 
  'lib/zip.js/deflate',
  'lib/zip.js/inflate',

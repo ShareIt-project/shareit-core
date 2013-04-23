@@ -289,6 +289,19 @@ _priv.DB_init = function(onsuccess)
     };
 
     /**
+     * Get a {Sharedpoint}
+     * @param {String} key {Sharedpoint} to be gotten.
+     * @param {Function} onsuccess Callback called when the
+     * {Sharedpoint} was gotten.
+     * @param {Function} onerror Callback called when the {Sharedpoint}
+     * was not able to be gotten.
+     */
+    db.files_get = function(key, callback)
+    {
+      db._get('files', key, callback);
+    };
+
+    /**
      * Get all the {Fileentry}s
      * @param {?IDBRange} range Range of {Fileentry}s to be gotten.
      * @param {Function} onsuccess Callback called when the {Fileentry}s
