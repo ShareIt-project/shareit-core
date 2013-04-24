@@ -1,7 +1,7 @@
 var shareit = (function(module){
 var _priv = module._priv = module._priv || {}
 
-_priv.SearchEngine = function(db)
+_priv.SearchEngine = function(db, filesManager)
 {
   var self = this
 
@@ -60,7 +60,8 @@ _priv.SearchEngine = function(db)
 
           else
           {
-            results[index] = {fileentry: fileentry, score: result.score}
+            fileentry.score = result.score
+            results[index] = fileentry
             index++
           }
 
@@ -81,6 +82,20 @@ _priv.SearchEngine = function(db)
 
     data()
   }
+
+  filesManager.addEventListener('file.added', function(event)
+  {
+    var fileentry = event.fileentry
+
+    self.add(fileentry)
+  })
+
+  filesManager.addEventListener('file.deleted', function(event)
+  {
+    var fileentry = event.fileentry
+
+    self.remove(fileentry)
+  })
 }
 
 return module

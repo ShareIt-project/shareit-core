@@ -29,7 +29,7 @@ module.Local = function(handshake_servers_file, onsuccess)
     var sharedpointsManager = new _priv.SharedpointsManager(db, filesManager)
 
     // Init search engine
-    var searchEngine = new _priv.SearchEngine(db)
+    var searchEngine = new _priv.SearchEngine(db, filesManager)
 
 
     self.cacheBackup_export = function(onfinish, onprogress, onerror)
