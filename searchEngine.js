@@ -57,35 +57,99 @@ _priv.SearchEngine = function(db, filesManager)
   this.search = function(query, callback)
   {
     var results = searchIndex.search(query)
+
+    var entries = {}
     var index = 0
 
     function data()
     {
       var result = results[index]
 
+      // There are (more) results, look for the real object and add the duplicates
       if(result)
         db.files_get(JSON.parse(result.ref), function(error, fileentry)
         {
+          // There was an error getting the fileentry for this result, ignore it
           if(error)
             results.splice(index, 1)
 
           else
           {
-            fileentry.score = result.score
-            results[index] = fileentry
-            index++
+            var entry = entries[fileentry.hash]
+
+            // Hashed file was not checked previously, add it
+            if(entry == undefined)
+            {
+              fileentry.score = result.score
+              entries[fileentry.hash] = fileentry
+
+              // Duplicates
+              db.files_getAll_byHash(fileentry.hash, function(error, fileentries)
+              {
+                if(fileentries.length > 1)
+                {
+                  // Count copies
+                  var copies = {}
+
+                  for(var i=0, entry; entry=fileentries[i]; i++)
+                  {
+                    copies[entry.name] = copies[entry.name] || 0
+                    copies[entry.name] += 1
+                  }
+
+                  // Convert copies in a duplicates array
+                  var duplicates = []
+
+                  for(var name in copies)
+                    duplicates.push({name: name, copies: copies[name]})
+
+                  // Sort the duplicates by number of copies
+                  duplicates.sort(function(a,b)
+                  {
+                    return b.copies - a.copies
+                  })
+
+                  // Set the fileentry as the most popular duplicate and remove it
+                  fileentry.name = duplicates[0].name
+                  duplicates.splice(0, 1)
+
+                  // Keep only the duplicates name
+                  for(var i=0, duplicate; duplicate=duplicates[i]; i++)
+                    duplicates[i] = duplicate.name
+
+                  // Set the duplicates
+                  fileentry.duplicates = duplicates
+                }
+
+                results[index] = fileentry
+                index++
+
+                data()
+              })
+              return
+            }
+
+            // Hashed file was checked previously, increase the score of the
+            // first one and remove this duplicate
+            else
+            {
+              entry.score += result.score
+
+              results.splice(index, 1)
+            }
           }
 
           data()
         })
 
+      // There are no (more) results, sort the results array and return it
       else
       {
-        // Sort the results on score descending relevance
-        results.sort(function(a,b)
-        {
-          return b.score - a.score
-        })
+//        // Sort the results on score descending relevance
+//        results.sort(function(a,b)
+//        {
+//          return b.score - a.score
+//        })
 
         callback(null, results)
       }
