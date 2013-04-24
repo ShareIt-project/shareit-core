@@ -14,6 +14,19 @@ _priv.FilesManager = function(db, peersManager)
 
   var self = this;
 
+  // Init hasher
+  var hasher = new _priv.Hasher(db, policy, this);
+  hasher.onhashed = function(fileentry)
+  {
+    // Notify the other peers about the new hashed file
+    self._send_file_added(fileentry);
+  };
+  hasher.ondeleted = function(fileentry)
+  {
+    // Notify the other peers about the deleted file
+    self._send_file_deleted(fileentry);
+  };
+
 
   /**
    * Get the channel of one of the peers that have the file from its hash.
@@ -388,6 +401,11 @@ _priv.FilesManager = function(db, peersManager)
         cb(null, sharing)
       }
     })
+  }
+
+  this.hash = function(files, sharedpoint_name)
+  {
+    hasher.hash(files, sharedpoint_name)
   }
 }
 

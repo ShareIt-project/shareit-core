@@ -3,19 +3,6 @@ var _priv = module._priv = module._priv || {}
 
 _priv.SharedpointsManager = function(db, filesManager)
 {
-  // Init hasher
-  var hasher = new _priv.Hasher(db, policy, this);
-  hasher.onhashed = function(fileentry)
-  {
-    // Notify the other peers about the new hashed file
-    filesManager._send_file_added(fileentry);
-  };
-  hasher.ondeleted = function(fileentry)
-  {
-    // Notify the other peers about the deleted file
-    filesManager._send_file_deleted(fileentry);
-  };
-
   this.getSharedpoints = function(callback)
   {
     db.sharepoints_getAll(null, callback);
@@ -70,7 +57,7 @@ _priv.SharedpointsManager = function(db, filesManager)
 
         db.sharepoints_put(sharedpoint);
 
-        hasher.hash(files, sharedpoint_name);
+        filesManager.hash(files, sharedpoint_name);
 
         if(cb)
           cb();
