@@ -110,8 +110,7 @@ _priv.SearchEngine = function(db, filesManager)
                   })
 
                   // Set the fileentry as the most popular duplicate and remove it
-                  fileentry.name = duplicates[0].name
-                  duplicates.splice(0, 1)
+                  fileentry.name = duplicates.shift().name
 
                   // Keep only the duplicates name
                   for(var i=0, duplicate; duplicate=duplicates[i]; i++)
