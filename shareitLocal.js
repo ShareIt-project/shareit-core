@@ -101,11 +101,11 @@ module.Local = function(handshake_servers_file, onsuccess)
     filesManager.addEventListener('file.added',   forwardEvent);
     filesManager.addEventListener('file.deleted', forwardEvent);
 
-    filesManager.addEventListener('sharedpoints.update', forwardEvent);
-
     filesManager.addEventListener('transfer.begin',  forwardEvent);
     filesManager.addEventListener('transfer.end',    forwardEvent);
     filesManager.addEventListener('transfer.update', forwardEvent);
+
+    sharedpointsManager.addEventListener('sharedpoints.update', forwardEvent);
 
     if(onsuccess)
       onsuccess(self)

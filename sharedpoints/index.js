@@ -3,6 +3,10 @@ var _priv = module._priv = module._priv || {}
 
 _priv.SharedpointsManager = function(db, filesManager)
 {
+  EventTarget.call(this);
+
+  var self = this;
+
   this.getSharedpoints = function(callback)
   {
     db.sharepoints_getAll(null, callback);
@@ -76,6 +80,70 @@ _priv.SharedpointsManager = function(db, filesManager)
         onsuccess(result)
     });
   };
+
+  filesManager.addEventListener('file.added', function(event)
+  {
+    var fileentry = event.fileentry
+
+    // Update fileentry sharedpoint size
+    db.sharepoints_get(fileentry.sharedpoint, function(error, sharedpoint)
+    {
+      if(error)
+        console.error(error)
+
+      else
+      {
+        // Increase sharedpoint shared size
+        sharedpoint.size += fileentry.file.size;
+
+        db.sharepoints_put(sharedpoint, function(error, sharedpoint)
+        {
+          if(error)
+            console.error(error)
+
+          else
+          {
+            var event = document.createEvent("Event");
+                event.initEvent('sharedpoints.update',true,true);
+
+            self.dispatchEvent(event);
+          }
+        });
+      }
+    });
+  });
+
+  filesManager.addEventListener('file.deleted', function(event)
+  {
+    var fileentry = event.fileentry
+
+    // Update fileentry sharedpoint size
+    db.sharepoints_get(fileentry.sharedpoint, function(error, sharedpoint)
+    {
+      if(error)
+        console.error(error)
+
+      else
+      {
+        // Increase sharedpoint shared size
+        sharedpoint.size -= fileentry.file.size;
+
+        db.sharepoints_put(sharedpoint, function(error, sharedpoint)
+        {
+          if(error)
+            console.error(error)
+
+          else
+          {
+            var event = document.createEvent("Event");
+                event.initEvent('sharedpoints.update',true,true);
+
+            self.dispatchEvent(event);
+          }
+        });
+      }
+    });
+  });
 }
 
 return module

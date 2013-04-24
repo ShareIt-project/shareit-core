@@ -274,33 +274,6 @@ _priv.FilesManager = function(db, peersManager)
         event.fileentry = fileentry
 
     this.dispatchEvent(event);
-
-    // Update fileentry sharedpoint size
-    db.sharepoints_get(fileentry.sharedpoint, function(error, sharedpoint)
-    {
-      if(error)
-        console.error(error)
-
-      else
-      {
-        // Increase sharedpoint shared size
-        sharedpoint.size += fileentry.file.size;
-
-        db.sharepoints_put(sharedpoint, function(error, sharedpoint)
-        {
-          if(error)
-            console.error(error)
-
-          else
-          {
-            var event = document.createEvent("Event");
-                event.initEvent('sharedpoints.update',true,true);
-
-            self.dispatchEvent(event);
-          }
-        });
-      }
-    });
   };
 
   /**
@@ -314,33 +287,6 @@ _priv.FilesManager = function(db, peersManager)
         event.fileentry = fileentry
 
     this.dispatchEvent(event);
-
-    // Update fileentry sharedpoint size
-    db.sharepoints_get(fileentry.sharedpoint, function(error, sharedpoint)
-    {
-      if(error)
-        console.error(error)
-
-      else
-      {
-        // Increase sharedpoint shared size
-        sharedpoint.size -= fileentry.file.size;
-
-        db.sharepoints_put(sharedpoint, function(error, sharedpoint)
-        {
-          if(error)
-            console.error(error)
-
-          else
-          {
-            var event = document.createEvent("Event");
-                event.initEvent('sharedpoints.update',true,true);
-
-            self.dispatchEvent(event);
-          }
-        });
-      }
-    });
   };
 
 
