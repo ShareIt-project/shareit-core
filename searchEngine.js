@@ -43,6 +43,17 @@ _priv.SearchEngine = function(db, filesManager)
     searchIndex.remove({id: id})
   }
 
+  function update(fileentry)
+  {
+    var id = JSON.stringify([fileentry.peer, fileentry.sharedpoint,
+                             fileentry.path, fileentry.name])
+
+    searchIndex.update({id:          id,
+                        sharedpoint: fileentry.sharedpoint,
+                        path:        fileentry.path,
+                        name:        fileentry.name})
+  }
+
   this.search = function(query, callback)
   {
     var results = searchIndex.search(query)
@@ -95,6 +106,16 @@ _priv.SearchEngine = function(db, filesManager)
     var fileentry = event.fileentry
 
     self.remove(fileentry)
+  })
+
+  filesManager.addEventListener('fileslist.updated', function(event)
+  {
+    var fileentries = event.fileslist
+
+    // [ToDo] Use individiual events for add and remove
+    for(var i=0, fileentry; fileentry=fileentries[i]; i++)
+      self.add(fileentry)
+//      update(fileentry)
   })
 }
 
