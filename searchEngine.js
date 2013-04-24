@@ -3,8 +3,10 @@ var _priv = module._priv = module._priv || {}
 
 _priv.SearchEngine = function(db)
 {
+  var self = this
+
   // Init the search index
-  var index = lunr(function()
+  var searchIndex = lunr(function()
   {
     this.field('sharedpoint')
     this.field('path', {boost: 10})
@@ -19,7 +21,7 @@ _priv.SearchEngine = function(db)
 
     else
       for(var i=0, fileentry; fileentry=fileentries[i]; i++)
-        this.add(fileentry)
+        self.add(fileentry)
   })
 
   this.add = function(fileentry)
@@ -27,10 +29,10 @@ _priv.SearchEngine = function(db)
     var id = JSON.stringify([fileentry.peer, fileentry.sharedpoint,
                              fileentry.path, fileentry.name])
 
-    index.add({id:          id,
-               sharedpoint: fileentry.sharedpoint,
-               path:        fileentry.path,
-               name:        fileentry.name})
+    searchIndex.add({id:          id,
+                     sharedpoint: fileentry.sharedpoint,
+                     path:        fileentry.path,
+                     name:        fileentry.name})
   }
 
   this.remove = function(fileentry)
@@ -38,12 +40,12 @@ _priv.SearchEngine = function(db)
     var id = JSON.stringify([fileentry.peer, fileentry.sharedpoint,
                              fileentry.path, fileentry.name])
 
-    index.remove({id: id})
+    searchIndex.remove({id: id})
   }
 
   this.search = function(query, callback)
   {
-    var results = index.search(query)
+    var results = searchIndex.search(query)
     var index = 0
 
     function data()

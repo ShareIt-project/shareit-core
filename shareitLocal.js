@@ -70,6 +70,11 @@ module.Local = function(handshake_servers_file, onsuccess)
       callback(null, Object.keys(peersManager.getChannels()).length);
     }
 
+    self.searchEngine_search = function(query, callback)
+    {
+      searchEngine.search(query, callback)
+    }
+
     self.sharedpointsManager_addSharedpoint_Folder = function(files, callback)
     {
       sharedpointsManager.addSharedpoint_Folder(files, callback)

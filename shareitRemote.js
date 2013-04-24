@@ -102,6 +102,11 @@ module.Remote = function(channel, onsuccess)
     call('numPeers', callback)
   }
 
+  this.searchEngine_search = function(query, callback)
+  {
+    call('searchEngine_search', query, callback)
+  }
+
   this.sharedpointsManager_addSharedpoint_Folder = function(files, callback)
   {
     call('sharedpointsManager_addSharedpoint_Folder', files, callback)
