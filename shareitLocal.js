@@ -65,6 +65,16 @@ module.Local = function(handshake_servers_file, onsuccess)
       filesManager.files_sharing(callback)
     }
 
+    self.fileslist_disableUpdates = function(uid, callback)
+    {
+      peersManager.getChannels()[uid].fileslist_disableUpdates()
+    }
+
+    self.fileslist_query = function(uid, flags, callback)
+    {
+      peersManager.getChannels()[uid].fileslist_query(flags)
+    }
+
     self.numPeers = function(callback)
     {
       callback(null, Object.keys(peersManager.getChannels()).length);
@@ -96,10 +106,12 @@ module.Local = function(handshake_servers_file, onsuccess)
 
 
     peersManager.addEventListener('error.noPeers', forwardEvent);
-    peersManager.addEventListener('uid', forwardEvent);
+    peersManager.addEventListener('uid',           forwardEvent);
 
     filesManager.addEventListener('file.added',   forwardEvent);
     filesManager.addEventListener('file.deleted', forwardEvent);
+
+    filesManager.addEventListener('fileslist.updated', forwardEvent);
 
     filesManager.addEventListener('transfer.begin',  forwardEvent);
     filesManager.addEventListener('transfer.end',    forwardEvent);

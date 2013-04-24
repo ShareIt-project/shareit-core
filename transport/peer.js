@@ -82,10 +82,11 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
 
       // Notify about fileslist update
       var event = document.createEvent("Event");
-          event.initEvent('fileslist._updated',true,true);
+          event.initEvent('fileslist.updated',true,true);
           event.fileslist = fileentries
+          event.uid = transport.uid
 
-      transport.dispatchEvent(event);
+      filesManager.dispatchEvent(event);
     })
   });
 
@@ -121,15 +122,16 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
       // [ToDo] Check if we have already the file from this peer in the index so
       // we don't dispatch the event twice
 
-      // Notify about fileslist update
-      var event = document.createEvent("Event");
-          event.initEvent('fileslist._updated',true,true);
 
       db.files_getAll_byPeer(transport.uid, function(error, fileslist)
       {
-        event.fileslist = fileslist
+        // Notify about fileslist update
+        var event = document.createEvent("Event");
+            event.initEvent('fileslist.updated',true,true);
+            event.fileslist = fileslist
+            event.uid = transport.uid
 
-        transport.dispatchEvent(event);
+        filesManager.dispatchEvent(event);
       })
     })
   });
@@ -145,15 +147,15 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
     // Remove the fileentry for the fileslist
     db.files_delete(fileentry, function(error)
     {
-      // Notify about fileslist update
-      var event = document.createEvent("Event");
-          event.initEvent('fileslist._updated',true,true);
-
       db.files_getAll_byPeer(transport.uid, function(error, fileslist)
       {
-        event.fileslist = fileslist
+        // Notify about fileslist update
+        var event = document.createEvent("Event");
+            event.initEvent('fileslist.updated',true,true);
+            event.fileslist = fileslist
+            event.uid = transport.uid
 
-        transport.dispatchEvent(event);
+        filesManager.dispatchEvent(event);
       })
     })
   });

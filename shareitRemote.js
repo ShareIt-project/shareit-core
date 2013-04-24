@@ -97,6 +97,16 @@ module.Remote = function(channel, onsuccess)
     call('files_sharing', callback)
   }
 
+  this.fileslist_disableUpdates = function(uid, callback)
+  {
+    call('fileslist_disableUpdates', uid, callback)
+  }
+
+  this.fileslist_query = function(uid, callback)
+  {
+    call('fileslist_query', uid, callback)
+  }
+
   this.numPeers = function(callback)
   {
     call('numPeers', callback)
