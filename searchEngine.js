@@ -95,6 +95,18 @@ _priv.SearchEngine = function(db, filesManager)
                   {
                     copies[entry.name] = copies[entry.name] || 0
                     copies[entry.name] += 1
+
+                    // Check if some of the duplicates is being shared
+                    if(entry.file)
+                      fileentry.file = entry.file
+
+                    else if(entry.blob)
+                    {
+                      fileentry.blob = entry.blob
+
+                      if(entry.bitmap)
+                        fileentry.bitmap = entry.bitmap
+                    }
                   }
 
                   // Convert copies in a duplicates array
