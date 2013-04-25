@@ -94,6 +94,14 @@ _priv.FilesManager = function(db, peersManager)
 
       channel._send_file_deleted(fileentry);
     });
+
+    // Quick hack for search
+    var SEND_UPDATES = 1;
+//    var SMALL_FILES_ACCELERATOR = 2
+    var flags = SEND_UPDATES;
+//    if()
+//      flags |= SMALL_FILES_ACCELERATOR
+    channel.fileslist_query(flags)
   })
 
 
