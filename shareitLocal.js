@@ -85,9 +85,22 @@ module.Local = function(handshake_servers_file, onsuccess)
       searchEngine.search(query, callback)
     }
 
-    self.sharedpointsManager_addSharedpoint = function(type, root, callback)
+    self.sharedpointsManager_add = function(type, root, callback)
     {
-      sharedpointsManager.addSharedpoint(type, root, callback)
+      var sharedpoint
+
+      switch(type)
+      {
+        case 'entry':
+          sharedpoint = new _priv.Entry(root, filesManager)
+          break
+
+        case 'folder':
+          sharedpoint = new _priv.Folder(root, filesManager)
+          break
+      }
+
+      sharedpointsManager.add(sharedpoint, callback)
     }
 
     self.sharedpointsManager_getSharedpoints = function(callback)

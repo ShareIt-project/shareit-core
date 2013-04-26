@@ -14,7 +14,7 @@ _priv.SharedpointsManager = function(db, filesManager)
 
 //  var sharedpoints = []
 //
-//  this.getSharedpoints(function(error, sharedpoints)
+//  db.sharepoints_getAll(null, function(error, sharedpoints)
 //  {
 //    if(error)
 //      console.error(error)
@@ -33,113 +33,38 @@ _priv.SharedpointsManager = function(db, filesManager)
 //      }
 //    })
 
-  function readDirectory(entry, cb)
+  this.add = function(sharedpoint, cb)
   {
-    var dirReader = entry.createReader();
-    var entries = []
-
-    function readEntries()
-    {
-      dirReader.readEntries(function(results)
-      {
-        if(results.length)
-        {
-          entries = entries.concat(toArray(results));
-          readEntries();
-        }
-        else
-          cb(entries.sort());
-      },
-      function(error)
-      {
-        console.error("readEntries error: "+error)
-      });
-    }
-  }
-
-  function addDirectory(entry, sharedpoint_name, cb)
-  {
-    readDirectory(entry, function(results)
-    {
-      for(var i=0, result; result=results[i]; i++)
-      {
-        // File
-        if(result.isFile)
-          result.file(function(file)
-          {
-            filesManager.hash(file, sharedpoint_name);
-          })
-
-        // Directory
-        else if(result.isDirectory)
-          addDirectory(result, sharedpoint_name)
-
-        // Unknown
-        else
-          console.warn("Unknown entry type for "+result.fullPath)
-      }
-
-      if(cb)
-        cb()
-    })
-  }
-
-  function addSharedpoint_Entry(entry, cb)
-  {
-    var sharedpoint_name = entry.name;
-
-    addDirectory(entry, sharedpoint_name, cb)
-  }
-
-  function addSharedpoint_Folder(files, cb)
-  {
-    var sharedpoint_name = files[0].webkitRelativePath.split('/')[0];
-
-    self.getSharedpoints(function(error, sharedpoints)
+    db.sharepoints_getAll(null, function(error, sharedpoints)
     {
       if(error)
+      {
         console.error(error)
+
+        if(cb)
+          cb(new Error("Error getting sharedpoints");
+      }
 
       else
       {
-        for(var i = 0, sharedpoint; sharedpoint = sharedpoints[i]; i++)
-          if(sharedpoint.name == name)
+        // Check if we have already this sharedpoint (one with this name)
+        for(var i=0, sp; sp=sharedpoints[i]; i++)
+          if(sp.name == sharedpoint.name)
           {
             if(cb)
-              cb(new Error('Sharedpoint already defined'));
+              cb(new Error('Sharedpoint '+sharedpoint.name+' already defined'));
 
             return;
           }
 
-        var sharedpoint =
-        {
-          name: sharedpoint_name,
-          type: 'folder',
-          size: 0
-        };
-
-        db.sharepoints_put(sharedpoint);
-
-        filesManager.hash(files, sharedpoint_name);
+        // Sharedpoint is new, add it to database and start hashing its files
+        db.sharepoints_put(folder);
+        folder.hash();
 
         if(cb)
           cb();
       }
     });
-  };
-
-  this.addSharedpoint = function(type, root, cb)
-  {
-    switch(type)
-    {
-      case 'entry':
-        addSharedpoint_Entry(root, cb)
-        break
-
-      case 'folder':
-        addSharedpoint_Folder(root, cb)
-        break
-    }
   };
 
   this.delete = function(name, onsuccess)
