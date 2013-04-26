@@ -16,7 +16,6 @@ _priv.Hasher = function(db, policy, sharedpointsManager)
   /**
    * Refresh hashes after one hour
    */
-
   function updateTimeout()
   {
     clearTimeout(timeout);
@@ -31,7 +30,6 @@ _priv.Hasher = function(db, policy, sharedpointsManager)
    * Delete a {Fileentry} (mainly because it was removed from the filesystem)
    * @param {Fileentry} fileentry {Fileentry} to be removed from database.
    */
-
   function fileentry_delete(fileentry)
   {
     // Remove file from the database
@@ -50,7 +48,6 @@ _priv.Hasher = function(db, policy, sharedpointsManager)
    * Set a {Fileentry} as hashed and store it on the database
    * @param {Fileentry} fileentry {Fileentry} to be added to the database.
    */
-
   function fileentry_hashed(fileentry)
   {
     // Remove hashed file from the queue
@@ -121,49 +118,49 @@ _priv.Hasher = function(db, policy, sharedpointsManager)
    */
   this.hash = function(files, sharedpoint_name)
   {
-    // Ignore files that are already on the queue
-    for(var j = 0, q; q = queue[j]; j++)
-      for(var i = 0, sp; sp = files[i];)
+    function hash(file)
+    {
+      // File has zero size
+      if(!file.size)
       {
-        // File has zero size
-        if(!sp.size)
+        var fileentry =
         {
-          // Precalculated hash for zero sized files
-          sp.hash = 'z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==';
-          fileentry_hashed(sp);
-
-          files.splice(i);
+            // Precalculated hash for zero sized files
+            hash: 'z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==',
+            file: file
         }
 
-      // File is already on the queue list
-        else if(sp == q)
-          files.splice(i);
+        fileentry_hashed(fileentry);
 
-      // Normal file, hash it
-        else i++;
+        return
       }
 
-      // If any file was not on the queue, hash it
-      if(files.length)
+      // Ignore files that are already on the queue
+      for(var j = 0, q; q = queue[j]; j++)
+        if(file == q)
+          return;
+
+      queue = queue.push(file);
+
+      // Process the file
+      var path = file.webkitRelativePath.split('/').slice(1, -1).join('/');
+      var fileentry =
       {
-        files = Array.prototype.slice.call(files);
-        queue = queue.concat(files);
+        'sharedpoint': sharedpoint_name,
+        'path': path,
+        'file': file
+      };
 
+      worker.postMessage(['hash', fileentry]);
+    }
 
-        // Run over all the files on the queue and process them
-        for(var i = 0, file; file = files[i]; ++i)
-        {
-          var path = file.webkitRelativePath.split('/').slice(1, -1).join('/');
-          var fileentry =
-          {
-            'sharedpoint': sharedpoint_name,
-            'path': path,
-            'file': file
-          };
+    if(files typeof Array)
+      // Run over all the files on the queue and process them
+      for(var i=0, file; file=files[i]; ++i)
+        hash(file, sharedpoint_name)
 
-          worker.postMessage(['hash', fileentry]);
-        }
-      }
+    else
+      hash(files, sharedpoint_name)
   };
 
   /**

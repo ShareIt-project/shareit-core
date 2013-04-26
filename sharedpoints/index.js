@@ -32,11 +32,70 @@ _priv.SharedpointsManager = function(db, filesManager)
 //        }
 //      }
 //    })
-  this.addSharedpoint_Folder = function(files, cb)
+
+  function readDirectory(entry, cb)
+  {
+    var dirReader = entry.createReader();
+    var entries = []
+
+    function readEntries()
+    {
+      dirReader.readEntries(function(results)
+      {
+        if(results.length)
+        {
+          entries = entries.concat(toArray(results));
+          readEntries();
+        }
+        else
+          cb(entries.sort());
+      },
+      function(error)
+      {
+        console.error("readEntries error: "+error)
+      });
+    }
+  }
+
+  function addDirectory(entry, sharedpoint_name, cb)
+  {
+    readDirectory(entry, function(results)
+    {
+      for(var i=0, result; result=results[i]; i++)
+      {
+        // File
+        if(result.isFile)
+          result.file(function(file)
+          {
+            filesManager.hash(file, sharedpoint_name);
+          })
+
+        // Directory
+        else if(result.isDirectory)
+          addDirectory(result, sharedpoint_name)
+
+        // Unknown
+        else
+          console.warn("Unknown entry type for "+result.fullPath)
+      }
+
+      if(cb)
+        cb()
+    })
+  }
+
+  function addSharedpoint_Entry(entry, cb)
+  {
+    var sharedpoint_name = entry.name;
+
+    addDirectory(entry, sharedpoint_name, cb)
+  }
+
+  function addSharedpoint_Folder(files, cb)
   {
     var sharedpoint_name = files[0].webkitRelativePath.split('/')[0];
 
-    this.getSharedpoints(function(error, sharedpoints)
+    self.getSharedpoints(function(error, sharedpoints)
     {
       if(error)
         console.error(error)
@@ -67,6 +126,20 @@ _priv.SharedpointsManager = function(db, filesManager)
           cb();
       }
     });
+  };
+
+  this.addSharedpoint = function(type, root, cb)
+  {
+    switch(type)
+    {
+      case 'entry':
+        addSharedpoint_Entry(root, cb)
+        break
+
+      case 'folder':
+        addSharedpoint_Folder(root, cb)
+        break
+    }
   };
 
   this.delete = function(name, onsuccess)

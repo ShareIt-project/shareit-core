@@ -117,9 +117,9 @@ module.Remote = function(channel, onsuccess)
     call('searchEngine_search', query, callback)
   }
 
-  this.sharedpointsManager_addSharedpoint_Folder = function(files, callback)
+  this.sharedpointsManager_addSharedpoint = function(type, root, callback)
   {
-    call('sharedpointsManager_addSharedpoint_Folder', files, callback)
+    call('sharedpointsManager_addSharedpoint', type, root, callback)
   }
 
   this.sharedpointsManager_getSharedpoints = function(callback)

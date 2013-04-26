@@ -85,9 +85,9 @@ module.Local = function(handshake_servers_file, onsuccess)
       searchEngine.search(query, callback)
     }
 
-    self.sharedpointsManager_addSharedpoint_Folder = function(files, callback)
+    self.sharedpointsManager_addSharedpoint = function(type, root, callback)
     {
-      sharedpointsManager.addSharedpoint_Folder(files, callback)
+      sharedpointsManager.addSharedpoint(type, root, callback)
     }
 
     self.sharedpointsManager_getSharedpoints = function(callback)
