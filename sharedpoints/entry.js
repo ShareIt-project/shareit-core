@@ -4,7 +4,7 @@ var _priv = module._priv = module._priv || {}
 /**
  * Sharedpoint created by a Filesystem entry (for example Drag&Drop)
  */
-_priv.Entry = function(entry, filesManager)
+_priv.Entry = function(entry, db, filesManager)
 {
   this.name = entry.name;
   this.type = 'entry'
