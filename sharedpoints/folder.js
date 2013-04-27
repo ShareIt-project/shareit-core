@@ -4,42 +4,59 @@ var _priv = module._priv = module._priv || {}
 /**
  * Sharedpoint created by an Input tag
  */
-_priv.Folder = function(files, db, filesManager)
+_priv.Folder = function(fileList, db, filesManager)
 {
-  var self = this
-
-  function sort_pathName(a,b)
-  {
-    return (a.path - b.path) || (a.name - b.name)
-  }
-
-//  files.sort(sort_pathName)
-
-  this.name = files[0].webkitRelativePath.split('/')[0];
+  this.name = fileList[0].webkitRelativePath.split('/')[0];
   this.type = 'folder'
   this.size = 0
 
   this.hash = function()
   {
-    filesManager.hash(files, this.name);
-  }
+    console.info("Hashing sharedpoint '"+this.name+"'...")
 
-  this.refresh = function()
-  {
-    console.info("Start hashing of sharedpoint '"+self.name+"'")
+    var self = this
 
     // Get all files currently indexed to delete removed old ones
     db.files_getAll_byPeer("", function(error, fileentries)
     {
-      var entries = []
+      function sort_pathName(a,b)
+      {
+        return a.path.localeCompare(b.path) || a.name.localeCompare(b.name)
+      }
 
       // Get entries only for this sharedpoint
+      var entries = []
+
       for(var i=0, fileentry; fileentry=fileentries[i]; i++)
         if(fileentry.sharedpoint == self.name)
           entries.push(fileentry)
 
-      // Sort the files by path and name
       entries.sort(sort_pathName)
+
+      // Get the file entries from the FileList
+      var files = []
+
+      for(var i=0, file; file=fileList[i]; i++)
+      {
+        // Remove invalid entries
+        if(file.name == '.')
+          continue
+
+        // Generate the fileentry
+        var fileentry =
+        {
+          sharedpoint: self.name,
+          path: file.webkitRelativePath.split('/').slice(1, -1).join('/'),
+          name: file.name,
+
+          lastModifiedDate: file.lastModifiedDate,
+          file: file
+        }
+
+        files.push(fileentry)
+      }
+
+      files.sort(sort_pathName)
 
       // Run over the old and new files looking for deleted and added ones
       var ai = bi= 0;
@@ -51,8 +68,7 @@ _priv.Folder = function(files, db, filesManager)
         // Entry was removed
         if(entry < file || !file)
         {
-          db.files_delete(entry)
-          filesManager._send_file_deleted(entry)
+          filesManager.delete(entry)
 
           ai++;
         }
@@ -60,7 +76,7 @@ _priv.Folder = function(files, db, filesManager)
         // File was added
         else if(entry > file || !entry)
         {
-          filesManager.hash(file, self.name)
+          filesManager.add(file)
 
           bi++;
         }
@@ -69,12 +85,19 @@ _priv.Folder = function(files, db, filesManager)
         else
         {
           if(entry.lastModifiedDate < file.lastModifiedDate)
-            filesManager.hash(file, self.name)
+            filesManager.add(file, self.name)
 
           ai++;
           bi++;
         }
       }
+
+      setTimeout(function()
+      {
+        self.hash()
+      },
+      5*1000)
+//      1*60*1000)
     })
   }
 }

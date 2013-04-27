@@ -357,9 +357,15 @@ _priv.FilesManager = function(db, peersManager)
     })
   }
 
-  this.hash = function(files, sharedpoint_name)
+  this.add = function(fileentry)
   {
-    hasher.hash(files, sharedpoint_name)
+    hasher.hash(fileentry)
+  }
+
+  this.delete = function(fileentry)
+  {
+    db.files_delete(fileentry)
+    filesManager._send_file_deleted(fileentry)
   }
 }
 

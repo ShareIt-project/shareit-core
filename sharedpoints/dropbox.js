@@ -49,7 +49,7 @@ _priv.Dropbox = function(db, options)
   // Start fetching files
   this.getFiles(function(files)
   {
-    hasher.hash(files, sharedpoint);
+    hasher.hash(files);
   });
 }
 

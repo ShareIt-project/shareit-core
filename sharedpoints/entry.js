@@ -44,7 +44,7 @@ _priv.Entry = function(entry, db, filesManager)
         if(result.isFile)
           result.file(function(file)
           {
-            filesManager.hash(file, sharedpoint_name);
+            filesManager.add(file, sharedpoint_name);
           })
 
         // Directory

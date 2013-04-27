@@ -51,7 +51,7 @@ _priv.Hasher = function(db, policy, sharedpointsManager)
   function fileentry_hashed(fileentry)
   {
     // Remove hashed file from the queue
-    queue.splice(queue.indexOf(fileentry.file));
+    queue.splice(queue.indexOf(fileentry));
 
     /**
      * Add file to the database
@@ -116,46 +116,27 @@ _priv.Hasher = function(db, policy, sharedpointsManager)
    * Hash the files from a {Sharedpoint}.
    * @param {Array} files List of files to be hashed.
    */
-  this.hash = function(files, sharedpoint_name)
+  this.hash = function(fileentry)
   {
-    function hash(file)
+    // File has zero size
+    if(!fileentry.file.size)
     {
-      var path = file.webkitRelativePath.split('/').slice(1, -1).join('/');
-      var fileentry =
-      {
-        sharedpoint: sharedpoint_name,
-        path: path,
-        file: file
-      };
+      // Precalculated hash for zero sized files
+      fileentry.hash = 'z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==',
 
-      // File has zero size
-      if(!file.size)
-      {
-        // Precalculated hash for zero sized files
-        fileentry.hash = 'z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==',
+      fileentry_hashed(fileentry);
 
-        fileentry_hashed(fileentry);
-
-        return
-      }
-
-      // Ignore files that are already on the queue
-      for(var j = 0, q; q = queue[j]; j++)
-        if(file == q)
-          return;
-
-      // Hash the file
-      queue.push(file);
-      worker.postMessage(['hash', fileentry]);
+      return
     }
 
-    if(files instanceof FileList)
-      // Run over all the files on the queue and process them
-      for(var i=0, file; file=files[i]; ++i)
-        hash(file, sharedpoint_name)
+    // Ignore files that are already on the queue
+    for(var j = 0, q; q = queue[j]; j++)
+      if(fileentry.file == q)
+        return;
 
-    else
-      hash(files, sharedpoint_name)
+    // Hash the file
+    queue.push(fileentry);
+    worker.postMessage(['hash', fileentry]);
   };
 
   /**
