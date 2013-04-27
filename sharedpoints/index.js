@@ -59,7 +59,8 @@ _priv.SharedpointsManager = function(db, filesManager)
 
         // Sharedpoint is new, add it to database and start hashing its files
         db.sharepoints_put(sharedpoint);
-        sharedpoint.hash();
+        sharedpoint.refresh();
+//        sharedpoint.hash();
 
         if(cb)
           cb();

@@ -6,6 +6,8 @@ var _priv = module._priv = module._priv || {}
  */
 _priv.Folder = function(files, db, filesManager)
 {
+  var self = this
+
   function sort_pathName(a,b)
   {
     return (a.path - b.path) || (a.name - b.name)
@@ -24,14 +26,16 @@ _priv.Folder = function(files, db, filesManager)
 
   this.refresh = function()
   {
+    console.info("Start hashing of sharedpoint '"+self.name+"'")
+
     // Get all files currently indexed to delete removed old ones
     db.files_getAll_byPeer("", function(error, fileentries)
     {
       var entries = []
 
       // Get entries only for this sharedpoint
-      for(var i=o, fileentry; fileentry=fileentries[i]; i++)
-        if(fileentry.sharedpoint == this.name)
+      for(var i=0, fileentry; fileentry=fileentries[i]; i++)
+        if(fileentry.sharedpoint == self.name)
           entries.push(fileentry)
 
       // Sort the files by path and name
@@ -39,13 +43,13 @@ _priv.Folder = function(files, db, filesManager)
 
       // Run over the old and new files looking for deleted and added ones
       var ai = bi= 0;
-      while(ai < entries.length && bi < files.length)
+      while(ai < entries.length || bi < files.length)
       {
         var entry = entries[ai]
         var file  = files[bi]
 
         // Entry was removed
-        if(entry < file)
+        if(entry < file || !file)
         {
           db.files_delete(entry)
           filesManager._send_file_deleted(entry)
@@ -54,9 +58,9 @@ _priv.Folder = function(files, db, filesManager)
         }
 
         // File was added
-        else if(entry > file)
+        else if(entry > file || !entry)
         {
-          filesManager.hash(file)
+          filesManager.hash(file, self.name)
 
           bi++;
         }
@@ -64,8 +68,8 @@ _priv.Folder = function(files, db, filesManager)
         // Both entry and file are equal, check the modification date
         else
         {
-          if(entry.modificationDate < file.modificationDate)
-            filesManager.hash(file)
+          if(entry.lastModifiedDate < file.lastModifiedDate)
+            filesManager.hash(file, self.name)
 
           ai++;
           bi++;
