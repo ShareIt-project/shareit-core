@@ -26,7 +26,7 @@ module.Local = function(handshake_servers_file, onsuccess)
     var cacheBackup = new _priv.CacheBackup(db, filesManager)
 
     // Init sharedpoints manager
-    var sharedpointsManager = new _priv.SharedpointsManager(db, filesManager)
+    var sharedpointsManager = new _priv.SharedpointsManager(db)
 
     // Init search engine
     var searchEngine = new _priv.SearchEngine(db, filesManager)
@@ -130,7 +130,7 @@ module.Local = function(handshake_servers_file, onsuccess)
     filesManager.addEventListener('transfer.end',    forwardEvent);
     filesManager.addEventListener('transfer.update', forwardEvent);
 
-    sharedpointsManager.addEventListener('sharedpoints.update', forwardEvent);
+    filesManager.addEventListener('sharedpoints.update', forwardEvent);
 
     if(onsuccess)
       onsuccess(self)

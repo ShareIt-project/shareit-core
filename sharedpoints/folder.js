@@ -10,11 +10,11 @@ _priv.Folder = function(fileList, db, filesManager)
   this.type = 'folder'
   this.size = 0
 
+  var self = this
+
   this.hash = function()
   {
     console.info("Hashing sharedpoint '"+this.name+"'...")
-
-    var self = this
 
     // Get all files currently indexed to delete removed old ones
     db.files_getAll_byPeer("", function(error, fileentries)
@@ -106,6 +106,56 @@ _priv.Folder = function(fileList, db, filesManager)
 //      1*60*1000)
     })
   }
+
+  filesManager.addEventListener('file.added', function(event)
+  {
+    var fileentry = event.fileentry
+
+    if(fileentry.sharedpoint == self.name)
+    {
+      // Increase sharedpoint shared size
+      self.size += fileentry.file.size;
+  
+      db.sharepoints_put(self, function(error, sharedpoint)
+      {
+        if(error)
+          console.error(error)
+  
+        else
+        {
+          var event = document.createEvent("Event");
+              event.initEvent('sharedpoints.update',true,true);
+  
+          filesManager.dispatchEvent(event);
+        }
+      });
+    }
+  });
+
+  filesManager.addEventListener('file.deleted', function(event)
+  {
+    var fileentry = event.fileentry
+
+    if(fileentry.sharedpoint == self.name)
+    {
+      // Increase sharedpoint shared size
+      self.size -= fileentry.file.size;
+
+      db.sharepoints_put(self, function(error, sharedpoint)
+      {
+        if(error)
+          console.error(error)
+
+        else
+        {
+          var event = document.createEvent("Event");
+              event.initEvent('sharedpoints.update',true,true);
+
+          filesManager.dispatchEvent(event);
+        }
+      });
+    }
+  });
 }
 
 return module
