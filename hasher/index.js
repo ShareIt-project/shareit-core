@@ -187,10 +187,6 @@ _priv.Hasher = function(db, policy, sharedpointsManager)
             // Sharedpoint was removed, remove the file from database
             if(!sharedpoint_exist(fileentry.sharedpoint.name))
               fileentry_delete(fileentry);
-
-          // File is a real filesystem one, rehash it
-            else if(fileentry.file)
-              worker.postMessage(['refresh', fileentry]);
           }
 
           // Update timeout for the next refresh walkabout
@@ -201,9 +197,6 @@ _priv.Hasher = function(db, policy, sharedpointsManager)
       });
     });
   };
-
-  // Start hashing new files from the shared points on load
-//  self.refresh()
 }
 
 return module
