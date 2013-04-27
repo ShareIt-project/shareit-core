@@ -156,7 +156,7 @@ _priv.SharedpointsManager = function(db)
 //          case 'dropbox':
 //            break
 //
-//          case 'folder':
+//          case 'FileList':
 //            break
 //        }
 //      }

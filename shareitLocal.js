@@ -95,8 +95,8 @@ module.Local = function(handshake_servers_file, onsuccess)
           sharedpoint = new _priv.Entry(root, db, filesManager)
           break
 
-        case 'folder':
-          sharedpoint = new _priv.Folder(root, db, filesManager)
+        case 'FileList':
+          sharedpoint = new _priv.FileList(root, db, filesManager)
           break
       }
 

@@ -65,7 +65,7 @@ shareit.load(
  'sharedpoints/index',
  'sharedpoints/dropbox',
  'sharedpoints/entry',
- 'sharedpoints/folder',
+ 'sharedpoints/fileList',
  'sharedpoints/mega',
 
  'transport/index',

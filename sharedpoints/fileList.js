@@ -4,12 +4,12 @@ var _priv = module._priv = module._priv || {}
 /**
  * Sharedpoint created by an Input tag
  */
-_priv.Folder = function(fileList, db, filesManager)
+_priv.FileList = function(fileList, db, filesManager)
 {
   _priv.Sharedpoint.call(this, db, filesManager)
 
   this.name = fileList[0].webkitRelativePath.split('/')[0];
-  this.type = 'folder'
+  this.type = 'FileList'
   this.size = 0
 
   this.fileList = function()
