@@ -42,7 +42,7 @@ _priv.SharedpointsManager = function(db, filesManager)
         console.error(error)
 
         if(cb)
-          cb(new Error("Error getting sharedpoints");
+          cb(new Error("Error getting sharedpoints"));
       }
 
       else
@@ -58,8 +58,8 @@ _priv.SharedpointsManager = function(db, filesManager)
           }
 
         // Sharedpoint is new, add it to database and start hashing its files
-        db.sharepoints_put(folder);
-        folder.hash();
+        db.sharepoints_put(sharedpoint);
+        sharedpoint.hash();
 
         if(cb)
           cb();

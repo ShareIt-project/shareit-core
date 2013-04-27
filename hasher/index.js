@@ -120,15 +120,19 @@ _priv.Hasher = function(db, policy, sharedpointsManager)
   {
     function hash(file)
     {
+      var path = file.webkitRelativePath.split('/').slice(1, -1).join('/');
+      var fileentry =
+      {
+        sharedpoint: sharedpoint_name,
+        path: path,
+        file: file
+      };
+
       // File has zero size
       if(!file.size)
       {
-        var fileentry =
-        {
-            // Precalculated hash for zero sized files
-            hash: 'z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==',
-            file: file
-        }
+        // Precalculated hash for zero sized files
+        fileentry.hash = 'z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==',
 
         fileentry_hashed(fileentry);
 
@@ -140,21 +144,12 @@ _priv.Hasher = function(db, policy, sharedpointsManager)
         if(file == q)
           return;
 
-      queue = queue.push(file);
-
-      // Process the file
-      var path = file.webkitRelativePath.split('/').slice(1, -1).join('/');
-      var fileentry =
-      {
-        'sharedpoint': sharedpoint_name,
-        'path': path,
-        'file': file
-      };
-
+      // Hash the file
+      queue.push(file);
       worker.postMessage(['hash', fileentry]);
     }
 
-    if(files typeof Array)
+    if(files instanceof FileList)
       // Run over all the files on the queue and process them
       for(var i=0, file; file=files[i]; ++i)
         hash(file, sharedpoint_name)

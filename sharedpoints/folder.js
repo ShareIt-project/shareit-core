@@ -11,7 +11,7 @@ _priv.Folder = function(files, db, filesManager)
     return (a.path - b.path) || (a.name - b.name)
   }
 
-  files.sort(sort_pathName)
+//  files.sort(sort_pathName)
 
   this.name = files[0].webkitRelativePath.split('/')[0];
   this.type = 'folder'
