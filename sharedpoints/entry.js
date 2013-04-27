@@ -9,60 +9,84 @@ _priv.Entry = function(entry, db, filesManager)
   _priv.Sharedpoint.call(this, db, filesManager)
 
   this.name = entry.name;
-  this.type = 'entry'
+  this.type = 'Entry'
   this.size = 0
 
-  function readDirectory(entry, cb)
-  {
-    var dirReader = entry.createReader();
-    var entries = []
+  var self = this
 
-    function readEntries()
+  this.fileList = function(cb)
+  {
+    // Get the file entries from the FileList
+    var files = []
+
+    function readDirectory(entry, cb)
     {
-      dirReader.readEntries(function(results)
+      var dirReader = entry.createReader();
+      var entries = []
+
+      function readEntries()
       {
-        if(results.length)
+        dirReader.readEntries(function(results)
         {
-          entries = entries.concat(toArray(results));
-          readEntries();
-        }
-        else
-          cb(entries.sort());
-      },
-      function(error)
-      {
-        console.error("readEntries error: "+error)
-      });
-    }
-  }
-
-  function addDirectory(entry, sharedpoint_name)
-  {
-    readDirectory(entry, function(results)
-    {
-      for(var i=0, result; result=results[i]; i++)
-      {
-        // File
-        if(result.isFile)
-          result.file(function(file)
+          if(results.length)
           {
-            filesManager.add(file, sharedpoint_name);
-          })
-
-        // Directory
-        else if(result.isDirectory)
-          addDirectory(result, sharedpoint_name)
-
-        // Unknown
-        else
-          console.warn("Unknown entry type for "+result.fullPath)
+            entries = entries.concat(toArray(results));
+            readEntries();
+          }
+          else
+            cb(entries);
+        },
+        function(error)
+        {
+          console.error("readEntries error: "+error)
+        });
       }
-    })
-  }
+    }
 
-  this.hash = function()
-  {
-    addDirectory(entry, sharedpoint_name, cb)
+    function addDirectory(entry, cb)
+    {
+      readDirectory(entry, function(results)
+      {
+        for(var i=0, result; result=results[i]; i++)
+        {
+          // File
+          if(result.isFile)
+            result.file(function(file)
+            {
+              // Generate the fileentry
+              var fileentry =
+              {
+                sharedpoint: self.name,
+                path: file.webkitRelativePath.split('/').slice(1, -1).join('/'),
+                name: file.name,
+
+                lastModifiedDate: file.lastModifiedDate,
+                file: file
+              }
+
+              files.push(fileentry);
+            })
+
+          // Directory
+          else if(result.isDirectory)
+            addDirectory(result)
+
+          // Unknown
+          else
+            console.warn("Unknown entry type for "+result.fullPath)
+        }
+
+        if(cb)
+          cb(files)
+      })
+    }
+
+    addDirectory(entry, function(files)
+    {
+      files.sort(self.sort_pathName)
+
+      cb(files)
+    })
   }
 }
 

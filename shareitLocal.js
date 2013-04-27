@@ -91,13 +91,17 @@ module.Local = function(handshake_servers_file, onsuccess)
 
       switch(type)
       {
-        case 'entry':
+        case 'Entry':
           sharedpoint = new _priv.Entry(root, db, filesManager)
           break
 
         case 'FileList':
           sharedpoint = new _priv.FileList(root, db, filesManager)
           break
+
+        default:
+          callback("Unknown sharedpoint type '"+type+"'")
+          return
       }
 
       sharedpointsManager.add(sharedpoint, callback)
