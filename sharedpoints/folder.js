@@ -84,8 +84,14 @@ _priv.Folder = function(fileList, db, filesManager)
         // Both entry and file are equal, check the modification date
         else
         {
-          if(entry.lastModifiedDate < file.lastModifiedDate)
-            filesManager.add(file, self.name)
+          // [Hack] When (re)moving the file from its original place, Chrome
+          // show it with size = 0 and lastModifiedDate = null instead of
+          // raising a NotFoundError error
+          if(file.lastModifiedDate == null)
+            filesManager.delete(entry)
+
+          else if(entry.lastModifiedDate < file.lastModifiedDate)
+            filesManager.add(file)
 
           ai++;
           bi++;
