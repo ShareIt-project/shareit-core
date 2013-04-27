@@ -1,6 +1,61 @@
 var shareit = (function(module){
 var _priv = module._priv = module._priv || {}
 
+_priv.Sharedpoint = function(db, filesManager)
+{
+  var self = this
+
+  filesManager.addEventListener('file.added', function(event)
+  {
+    var fileentry = event.fileentry
+
+    if(fileentry.sharedpoint == self.name)
+    {
+      // Increase sharedpoint shared size
+      self.size += fileentry.file.size;
+  
+      db.sharepoints_put(self, function(error, sharedpoint)
+      {
+        if(error)
+          console.error(error)
+  
+        else
+        {
+          var event = document.createEvent("Event");
+              event.initEvent('sharedpoints.update',true,true);
+  
+          filesManager.dispatchEvent(event);
+        }
+      });
+    }
+  });
+
+  filesManager.addEventListener('file.deleted', function(event)
+  {
+    var fileentry = event.fileentry
+
+    if(fileentry.sharedpoint == self.name)
+    {
+      // Increase sharedpoint shared size
+      self.size -= fileentry.file.size;
+
+      db.sharepoints_put(self, function(error, sharedpoint)
+      {
+        if(error)
+          console.error(error)
+
+        else
+        {
+          var event = document.createEvent("Event");
+              event.initEvent('sharedpoints.update',true,true);
+
+          filesManager.dispatchEvent(event);
+        }
+      });
+    }
+  });
+}
+
 _priv.SharedpointsManager = function(db)
 {
   var self = this;

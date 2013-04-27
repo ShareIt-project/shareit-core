@@ -6,6 +6,8 @@ var _priv = module._priv = module._priv || {}
  */
 _priv.Entry = function(entry, db, filesManager)
 {
+  _priv.Sharedpoint.call(this, db, filesManager)
+
   this.name = entry.name;
   this.type = 'entry'
   this.size = 0
