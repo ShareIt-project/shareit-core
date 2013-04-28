@@ -55,7 +55,7 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
         fileentry.peer = transport.uid
         fileentry.sharedpoint = ""
 
-        db.files_add(fileentry)
+        db.files_put(fileentry)
       }
 
       // [ToDo] Use parallize
