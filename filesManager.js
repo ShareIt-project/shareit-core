@@ -366,7 +366,7 @@ _priv.FilesManager = function(db, peersManager)
   this.delete = function(fileentry)
   {
     db.files_delete(fileentry)
-    filesManager._send_file_deleted(fileentry)
+    this._send_file_deleted(fileentry)
   }
 }
 
