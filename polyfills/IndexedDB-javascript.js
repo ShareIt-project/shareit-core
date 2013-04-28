@@ -94,11 +94,49 @@ function IdbJS_install()
   function IDBCursor(source, direction)
   {
     this._objects = []
-    this._index = 0
 
-    this.continue = function()
+    this._position = 0
+//    this._position = undefined
+    this._key = undefined
+    this._value = undefined
+
+    var gotValue = false
+
+    this.advance = function(count)
     {
-      this._index += 1
+      if(count == 0)
+        throw TypeError
+
+//    if(!transaction.active)
+//      throw DOMException("TransactionInactiveError");
+
+      if(!gotValue)
+        throw DOMException("InvalidStateError");
+
+      for(var i=0; i<count; i++)
+        steps_for_iterating_a_cursor(this, null)
+
+      gotValue = false
+    }
+
+    this.continue = function(key)
+    {
+//    if(!transaction.active)
+//      throw DOMException("TransactionInactiveError");
+
+//      if(!gotValue)
+//        throw DOMException("InvalidStateError");
+//
+//      if(key != undefined
+//      &&(key <= this._position && (direction == 'next' || direction == 'nextunique')
+//      || key >= this._position && (direction == 'prev' || direction == 'prevunique')))
+//        throw DOMException("DataError");
+//
+//      steps_for_iterating_a_cursor(this, key)
+//
+//      gotValue = false
+
+      this._position += 1
 
       var event = {target: {}}
       if(this.value)
@@ -106,12 +144,41 @@ function IdbJS_install()
 
       this._request._onsuccess(event)
     }
+
+    this.delete = function()
+    {
+      
+    }
+
+    this.update = function(value)
+    {
+      
+    }
+
+    this.__defineGetter__("source", function()
+    {
+      return source
+    })
+
+    this.__defineGetter__("direction", function()
+    {
+      return direction
+    })
+
+    this.__defineGetter__("primaryKey", function()
+    {
+    })
   }
   IDBCursor.prototype =
   {
+    get key()
+    {
+      return this._key
+    },
+
     get value()
     {
-      return this._objects[this._index]
+      return this._objects[this._position]
     }
   }
 
@@ -228,6 +295,15 @@ function IdbJS_install()
 
     this.openKeyCursor = function(range, direction)
     {
+//    if(!transaction.active)
+//      throw DOMException("TransactionInactiveError");
+
+//    if()
+//      throw DOMException("InvalidStateError");
+
+//    if()
+//      throw DOMException("DataError");
+
       direction = direction || "next"
 
       var request = new IDBRequest()
@@ -235,12 +311,29 @@ function IdbJS_install()
       if(Object.keys(records).length)
       {
         // Fill the cursor with the objectstore objects
-        var cursor = new IDBCursor(null, direction)
+        var cursor = new IDBCursor(this, direction)
+
+//        function steps_for_iterating_a_cursor(cursor, key)
+//        {
+//          var source = cursor.source
+//          var records = source.records
+//          var direction = cursor.direction
+//          var position = cursor._position
+//          var objectStorePosition = cursor._objectStore._position
+//          var range = cursor._range
+//
+//          var foundRecord
+//
+//          return cursor
+//        }
 
         function addKeys(key)
         {
-          for(var i=0, ref; ref=records[key][i]; i++)
-            cursor._objects.push(ref)
+          var refs = records[key]
+
+          if(refs)
+            for(var i=0, ref; ref=refs[i]; i++)
+              cursor._objects.push(ref)
         }
 
         if(range != undefined)
@@ -464,14 +557,16 @@ function IdbJS_install()
       return indexes[name]
     }
 
-    this.openCursor = function(range)
+    this.openCursor = function(range, direction)
     {
+      direction = direction || "next"
+
       var request = new IDBRequest()
 
       if(Object.keys(objects).length)
       {
         // Fill the cursor with the objectstore objects
-        var cursor = new IDBCursor()
+        var cursor = new IDBCursor(this, direction)
         for(var key in objects)
           cursor._objects.push(objects[key])
 

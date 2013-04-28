@@ -123,13 +123,14 @@ _priv.FilesManager = function(db, peersManager)
       sharedpoint: "",
       path: fileentry.path,
       name: fileentry.name,
+
       hash: fileentry.hash
     }
 
     // Add a blob container to our file stub
     new_fileentry.blob = new Blob([''],
     {
-      'type': fileentry.type
+      type: fileentry.type
     });
 
     // File size is zero, generate the file instead of request it

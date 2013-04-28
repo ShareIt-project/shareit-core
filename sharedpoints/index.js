@@ -12,7 +12,7 @@ _priv.Sharedpoint = function(db, filesManager)
 
   this.hash = function()
   {
-    console.info("Hashing sharedpoint '"+this.name+"'...")
+//    console.info("Hashing sharedpoint '"+this.name+"'...")
 
     var self = this
 
