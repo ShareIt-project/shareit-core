@@ -25,8 +25,6 @@ _priv.Transport_Host_init = function(transport, db)
 
   function generateFileObject(fileentry)
   {
-    var blob = fileentry.file || fileentry.blob || fileentry;
-
     var path = '';
     if(fileentry.sharedpoint)
     {
@@ -34,11 +32,13 @@ _priv.Transport_Host_init = function(transport, db)
       if(fileentry.path != '')
         path += '/' + fileentry.path;
     }
+    var name = fileentry.file ? fileentry.file.name : fileentry.name
+    var blob = fileentry.file || fileentry.blob || fileentry;
 
     var result =
     {
       path: path,
-      name: blob.name,
+      name: name,
 
       hash: fileentry.hash,
       size: blob.size,
