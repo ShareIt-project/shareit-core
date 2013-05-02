@@ -120,6 +120,7 @@ _priv.Transport_Host_init = function(transport, db)
   });
 
   // transfer
+
   /**
    * Catch request of file data
    */

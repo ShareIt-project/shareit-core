@@ -108,6 +108,7 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
 
 
   // fileslist updates
+
   /**
    * Catch when the other peer has added a new file
    */
@@ -144,7 +145,7 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
     var fileentry = event.data[0];
         fileentry.peer = transport.uid
 
-    // Remove the fileentry for the fileslist
+    // Remove the fileentry from the fileslist
     db.files_delete(fileentry, function(error)
     {
       db.files_getAll_byPeer(transport.uid, function(error, fileslist)
@@ -162,6 +163,7 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
 
 
   // transfer
+
   /**
    * Catch new sended data for a file
    */
@@ -173,7 +175,7 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
 
     // Fix back data transmited as UTF-8 to binary
     var byteArray = new Uint8Array(data.length);
-    for (var i = 0; i < data.length; i++)
+    for(var i = 0; i < data.length; i++)
       byteArray[i] = data.charCodeAt(i) & 0xff;
 
     data = byteArray;
@@ -199,10 +201,10 @@ _priv.Transport_Peer_init = function(transport, db, filesManager)
   });
 
   /**
-     * Request (more) data for a file
-     * @param {Fileentry} Fileentry of the file to be requested.
-     * @param {Number} chunk Chunk of the file to be requested.
-     */
+   * Request (more) data for a file
+   * @param {Fileentry} Fileentry of the file to be requested.
+   * @param {Number} chunk Chunk of the file to be requested.
+   */
   transport.transfer_query = function(fileentry, chunk)
   {
     transport.emit('transfer.query', fileentry.hash, chunk);
