@@ -4,6 +4,8 @@ var _priv = module._priv = module._priv || {}
 
 _priv.Transport_Fileslist_init = function(transport, db, filesManager)
 {
+  _priv.Transport_init(transport);
+
   // Host
 
   function generateFileObject(fileentry)

@@ -77,7 +77,6 @@ _priv.FilesManager = function(db, peersManager)
   {
     var channel = event.channel
 
-    _priv.Transport_init(channel);
     _priv.Transport_Fileslist_init(channel, db, self);
 //  _priv.Transport_Search_init(channel, db, self);
     _priv.Transport_Transfer_init(channel, db, self);

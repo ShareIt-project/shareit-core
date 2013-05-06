@@ -21,6 +21,8 @@ _priv.Transport_Transfer_init = function(transport, db, filesManager)
   if(typeof FileReader == 'undefined')
     return;
 
+  _priv.Transport_init(transport);
+
   /**
    * Catch request of file data
    */
