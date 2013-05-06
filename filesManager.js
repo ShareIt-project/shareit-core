@@ -78,10 +78,9 @@ _priv.FilesManager = function(db, peersManager)
     var channel = event.channel
 
     _priv.Transport_init(channel);
-    _priv.Transport_Host_init(channel, db);
-    _priv.Transport_Peer_init(channel, db, self);
     _priv.Transport_Fileslist_init(channel, db, self);
 //  _priv.Transport_Search_init(channel, db, self);
+    _priv.Transport_Transfer_init(channel, db, self);
 
     self.addEventListener('file.added', function(event)
     {

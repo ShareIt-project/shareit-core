@@ -70,6 +70,5 @@ shareit.load(
 
  'transport/index',
  'transport/fileslist',
- 'transport/host',
- 'transport/peer',
+ 'transport/transfer',
  'transport/search']);
