@@ -2,8 +2,10 @@ var shareit = (function(module){
 var _priv = module._priv = module._priv || {}
 
 
-_priv.Transport_Fileslist_init = function(transport, db, filesManager)
+_priv.Transport_Fileslist_init = function(transport, db)
 {
+  EventTarget.call(this);
+
   _priv.Transport_init(transport);
 
   // Host
@@ -160,11 +162,11 @@ _priv.Transport_Fileslist_init = function(transport, db, filesManager)
 
       // Notify about fileslist update
       var event = document.createEvent("Event");
-          event.initEvent('fileslist.updated',true,true);
+          event.initEvent('fileslist._send',true,true);
           event.fileslist = fileentries
           event.uid = transport.uid
 
-      filesManager.dispatchEvent(event);
+      self.dispatchEvent(event);
     })
   });
 
@@ -206,11 +208,11 @@ _priv.Transport_Fileslist_init = function(transport, db, filesManager)
       {
         // Notify about fileslist update
         var event = document.createEvent("Event");
-            event.initEvent('fileslist.updated',true,true);
+            event.initEvent('fileslist._added',true,true);
             event.fileslist = fileslist
             event.uid = transport.uid
 
-        filesManager.dispatchEvent(event);
+        self.dispatchEvent(event);
       })
     })
   });
@@ -230,11 +232,11 @@ _priv.Transport_Fileslist_init = function(transport, db, filesManager)
       {
         // Notify about fileslist update
         var event = document.createEvent("Event");
-            event.initEvent('fileslist.updated',true,true);
+            event.initEvent('fileslist._deleted',true,true);
             event.fileslist = fileslist
             event.uid = transport.uid
 
-        filesManager.dispatchEvent(event);
+        self.dispatchEvent(event);
       })
     })
   });

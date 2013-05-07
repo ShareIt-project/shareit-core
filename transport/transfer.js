@@ -15,8 +15,10 @@ if(typeof FileReader == 'undefined')
  * @param transport
  * @param {IDBdatabase} db ShareIt! database.
  */
-_priv.Transport_Transfer_init = function(transport, db, filesManager)
+_priv.Transport_Transfer_init = function(transport, db)
 {
+  EventTarget.call(this);
+
   // Filereader support (be able to host files from the filesystem)
   if(typeof FileReader == 'undefined')
     return;
@@ -114,7 +116,13 @@ _priv.Transport_Transfer_init = function(transport, db, filesManager)
         for(var i=0, fileentry; fileentry=fileentries[i]; i++)
           if(fileentry.blob)
           {
-            filesManager.updateFile(fileentry, chunk, data);
+            var event = document.createEvent("Event");
+                event.initEvent('transfer._send',true,true);
+                event.fileentry = fileentry
+                event.chunk = chunk
+                event.data = data
+
+            self.dispatchEvent(event);
             return
           }
       }
