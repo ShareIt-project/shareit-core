@@ -4,10 +4,6 @@ var _priv = module._priv = module._priv || {}
 
 _priv.Transport_Fileslist_init = function(transport, db)
 {
-  EventTarget.call(this);
-
-  _priv.Transport_init(transport);
-
   // Host
 
   function generateFileObject(fileentry)
@@ -166,7 +162,7 @@ _priv.Transport_Fileslist_init = function(transport, db)
           event.fileslist = fileentries
           event.uid = transport.uid
 
-      self.dispatchEvent(event);
+      transport.dispatchEvent(event);
     })
   });
 
@@ -212,7 +208,7 @@ _priv.Transport_Fileslist_init = function(transport, db)
             event.fileslist = fileslist
             event.uid = transport.uid
 
-        self.dispatchEvent(event);
+        transport.dispatchEvent(event);
       })
     })
   });
@@ -236,7 +232,7 @@ _priv.Transport_Fileslist_init = function(transport, db)
             event.fileslist = fileslist
             event.uid = transport.uid
 
-        self.dispatchEvent(event);
+        transport.dispatchEvent(event);
       })
     })
   });
