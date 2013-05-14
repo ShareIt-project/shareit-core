@@ -17,13 +17,9 @@ if(typeof FileReader == 'undefined')
  */
 _priv.Transport_Transfer_init = function(transport, db)
 {
-  EventTarget.call(this);
-
   // Filereader support (be able to host files from the filesystem)
   if(typeof FileReader == 'undefined')
     return;
-
-  _priv.Transport_init(transport);
 
   /**
    * Catch request of file data

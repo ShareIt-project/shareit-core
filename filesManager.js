@@ -77,6 +77,9 @@ _priv.FilesManager = function(db, peersManager)
   {
     var channel = event.channel
 
+    EventTarget.call(channel);
+    _priv.Transport_init(channel);
+
     _priv.Transport_Fileslist_init(channel, db);
 //  _priv.Transport_Search_init(channel, db);
     _priv.Transport_Transfer_init(channel, db);
@@ -96,9 +99,12 @@ _priv.FilesManager = function(db, peersManager)
 
     function fileslist_updated(event)
     {
-      event.type = 'fileslist.updated'
+      var event2 = document.createEvent("Event");
+          event2.initEvent('fileslist.updated',true,true);
+          event2.fileslist = event.fileslist
+          event2.uid = event.uid
 
-      self.dispatchEvent(event);
+      self.dispatchEvent(event2);
     }
 
     channel.addEventListener('fileslist._send', fileslist_updated);
