@@ -73,61 +73,65 @@ _priv.FilesManager = function(db, peersManager)
   }
 
 
-  peersManager.addEventListener('channel', function(event)
+  peersManager.addEventListener('datachannel', function(event)
   {
     var channel = event.channel
 
-    EventTarget.call(channel);
-    _priv.Transport_init(channel);
-
-    _priv.Transport_Fileslist_init(channel, db);
-//  _priv.Transport_Search_init(channel, db);
-    _priv.Transport_Transfer_init(channel, db);
-
-    self.addEventListener('file.added', function(event)
+    channel.addEventListener('open', function(event)
     {
-      var fileentry = event.fileentry;
+      console.log('Created datachannel with peer ' + channel.uid);
 
-      channel._send_file_added(fileentry);
-    });
-    self.addEventListener('file.deleted', function(event)
-    {
-      var fileentry = event.fileentry;
+      EventTarget.call(channel);
 
-      channel._send_file_deleted(fileentry);
-    });
+      _priv.Transport_init(channel);
+      _priv.Transport_Fileslist_init(channel, db);
+//    _priv.Transport_Search_init(channel, db);
+      _priv.Transport_Transfer_init(channel, db);
 
-    function fileslist_updated(event)
-    {
-      var event2 = document.createEvent("Event");
-          event2.initEvent('fileslist.updated',true,true);
-          event2.fileslist = event.fileslist
-          event2.uid = event.uid
+      self.addEventListener('file.added', function(event)
+      {
+        var fileentry = event.fileentry;
 
-      self.dispatchEvent(event2);
-    }
+        channel._send_file_added(fileentry);
+      });
+      self.addEventListener('file.deleted', function(event)
+      {
+        var fileentry = event.fileentry;
 
-    channel.addEventListener('fileslist._send', fileslist_updated);
-    channel.addEventListener('fileslist._added', fileslist_updated);
-    channel.addEventListener('fileslist._deleted', fileslist_updated);
+        channel._send_file_deleted(fileentry);
+      });
 
-    channel.addEventListener('transfer._send', function(event)
-    {
-      var fileentry = event.fileentry
-      var chunk     = event.chunk
-      var data      = event.data
+      function fileslist_updated(event)
+      {
+        var event2 = document.createEvent("Event");
+            event2.initEvent('fileslist.updated',true,true);
+            event2.fileslist = event.fileslist
+            event2.uid = event.uid
 
-      self.updateFile(fileentry, chunk, data);
-    });
+        self.dispatchEvent(event2);
+      }
 
+      channel.addEventListener('fileslist._send', fileslist_updated);
+      channel.addEventListener('fileslist._added', fileslist_updated);
+      channel.addEventListener('fileslist._deleted', fileslist_updated);
 
-    // Quick hack for search
-    var SEND_UPDATES = 1;
-//    var SMALL_FILES_ACCELERATOR = 2
-    var flags = SEND_UPDATES;
-//    if()
-//      flags |= SMALL_FILES_ACCELERATOR
-    channel.fileslist_query(flags)
+      channel.addEventListener('transfer._send', function(event)
+      {
+        var fileentry = event.fileentry
+        var chunk     = event.chunk
+        var data      = event.data
+
+        self.updateFile(fileentry, chunk, data);
+      });
+
+      // Quick hack for search
+      var SEND_UPDATES = 1;
+//      var SMALL_FILES_ACCELERATOR = 2
+      var flags = SEND_UPDATES;
+//      if()
+//        flags |= SMALL_FILES_ACCELERATOR
+      channel.fileslist_query(flags)
+    })
   })
 
 
