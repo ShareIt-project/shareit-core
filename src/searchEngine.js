@@ -1,7 +1,4 @@
-var shareit = (function(module){
-var _priv = module._priv = module._priv || {}
-
-_priv.SearchEngine = function(db, filesManager)
+function SearchEngine(db, filesManager)
 {
   var self = this
 
@@ -190,6 +187,3 @@ _priv.SearchEngine = function(db, filesManager)
       update(fileentry)
   })
 }
-
-return module
-})(shareit || {})

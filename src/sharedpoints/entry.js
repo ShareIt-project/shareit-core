@@ -1,12 +1,9 @@
-var shareit = (function(module){
-var _priv = module._priv = module._priv || {}
-
 /**
  * Sharedpoint created by a Filesystem entry (for example Drag&Drop)
  */
-_priv.Entry = function(entry, db, filesManager)
+function Entry(entry, db, filesManager)
 {
-  _priv.Sharedpoint.call(this, db, filesManager)
+  Sharedpoint.call(this, db, filesManager)
 
   this.name = entry.name;
   this.type = 'Entry'
@@ -89,6 +86,3 @@ _priv.Entry = function(entry, db, filesManager)
     })
   }
 }
-
-return module
-})(shareit || {})

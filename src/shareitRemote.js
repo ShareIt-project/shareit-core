@@ -1,9 +1,6 @@
 // Based on code from https://github.com/jaredhanson/jsonrpc-postmessage
 
-var shareit = (function(module){
-var _priv = module._priv = module._priv || {}
-
-module.Remote = function(channel, callback)
+function Remote(channel, callback)
 {
   var self = this
 
@@ -144,7 +141,9 @@ module.Remote = function(channel, callback)
 
   callback(null, this)
 }
-module.Remote.prototype = new EventTarget()
+Remote.prototype = new EventTarget();
 
-return module
-})(shareit || {})
+var shareit = shareit || {};
+    shareit.Remote = Remote;
+
+exports.shareit = shareit;

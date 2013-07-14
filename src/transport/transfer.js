@@ -1,7 +1,3 @@
-var shareit = (function(module){
-var _priv = module._priv = module._priv || {}
-
-
 // Filereader support (be able to host files from the filesystem)
 if(typeof FileReader == 'undefined')
 {
@@ -15,13 +11,13 @@ if(typeof FileReader == 'undefined')
  * @param transport
  * @param {IDBdatabase} db ShareIt! database.
  */
-_priv.Transport_Transfer_init = function(transport, db, filesManager)
+function Transport_Transfer_init(transport, db, filesManager)
 {
   // Filereader support (be able to host files from the filesystem)
   if(typeof FileReader == 'undefined')
     return;
 
-  _priv.Transport_init(transport);
+  Transport_init(transport);
 
   /**
    * Catch request of file data
@@ -155,6 +151,3 @@ _priv.Transport_Transfer_init = function(transport, db, filesManager)
     });
   })
 }
-
-return module
-})(shareit || {})

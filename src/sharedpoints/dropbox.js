@@ -1,7 +1,4 @@
-var shareit = (function(module){
-var _priv = module._priv = module._priv || {}
-
-_priv.Dropbox = function(db, options)
+function Dropbox(db, options)
 {
   var driver = new Dropbox.Drivers.Popup(
   {
@@ -52,6 +49,3 @@ _priv.Dropbox = function(db, options)
     hasher.hash(files);
   });
 }
-
-return module
-})(shareit || {})

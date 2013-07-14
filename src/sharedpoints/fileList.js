@@ -1,12 +1,9 @@
-var shareit = (function(module){
-var _priv = module._priv = module._priv || {}
-
 /**
  * Sharedpoint created by an Input tag
  */
-_priv.FileList = function(fileList, db, filesManager)
+function FileList(fileList, db, filesManager)
 {
-  _priv.Sharedpoint.call(this, db, filesManager)
+  Sharedpoint.call(this, db, filesManager)
 
   this.name = fileList[0].webkitRelativePath.split('/')[0];
   this.type = 'FileList'
@@ -42,6 +39,3 @@ _priv.FileList = function(fileList, db, filesManager)
     return files
   }
 }
-
-return module
-})(shareit || {})

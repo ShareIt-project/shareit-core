@@ -1,7 +1,4 @@
-var shareit = (function(module){
-var _priv = module._priv = module._priv || {}
-
-_priv.CacheBackup = function(db, filesManager)
+function CacheBackup(db, filesManager)
 {
   zip.workerScriptsPath = 'js/shareit-core/lib/zip.js/';
 
@@ -186,6 +183,3 @@ _priv.CacheBackup = function(db, filesManager)
     }, cb);
   };
 }
-
-return module
-})(shareit || {})

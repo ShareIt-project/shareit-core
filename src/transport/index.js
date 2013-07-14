@@ -1,11 +1,8 @@
-var shareit = (function(module){
-var _priv = module._priv = module._priv || {}
-
 /**
  * Init a channel as an event-based transport layer
  * @param transport
  */
-_priv.Transport_init = function(transport)
+function Transport_init(transport)
 {
   /**
    *  Compose and send message
@@ -31,7 +28,4 @@ _priv.Transport_init = function(transport)
     this.dispatchEvent(event);
   };
 }
-_priv.Transport_init.prototype = new EventTarget()
-
-return module
-})(shareit || {})
+Transport_init.prototype = new EventTarget();

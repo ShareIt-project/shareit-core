@@ -1,19 +1,16 @@
-var shareit = (function(module){
-var _priv = module._priv = module._priv || {}
-
-module.chunksize = 65536;
+var chunksize = 65536;
 
 
 /**
  *
  * @param {IDBDatabase} db ShareIt! database.
  */
-_priv.FilesManager = function(db, webp2p)
+function FilesManager(db, webp2p)
 {
   var self = this;
 
   // Init hasher
-  var hasher = new _priv.Hasher(db, policy, this);
+  var hasher = new Hasher(db, policy, this);
   hasher.onhashed = function(fileentry)
   {
     // Notify the other peers about the new hashed file
@@ -103,7 +100,7 @@ _priv.FilesManager = function(db, webp2p)
       switch(channel.label)
       {
         case 'fileslist':
-          _priv.Transport_Fileslist_init(channel, db, self, uid)
+          Transport_Fileslist_init(channel, db, self, uid)
           break
 
 //        case 'search':
@@ -111,7 +108,7 @@ _priv.FilesManager = function(db, webp2p)
 //          break
 
         case 'transfer':
-          _priv.Transport_Transfer_init(channel, db, self)
+          Transport_Transfer_init(channel, db, self)
           break
 
         case webp2p.routingLabel:
@@ -363,7 +360,4 @@ _priv.FilesManager = function(db, webp2p)
     send_file_deleted(fileentry)
   }
 }
-_priv.FilesManager.prototype = new EventTarget();
-
-return module
-})(shareit || {})
+FilesManager.prototype = new EventTarget();

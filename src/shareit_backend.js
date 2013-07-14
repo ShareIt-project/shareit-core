@@ -1,36 +1,7 @@
 // Based on code from https://github.com/jaredhanson/jsonrpc-postmessage
 
-importScripts('../webp2p/webp2p.js')
-
-importScripts(
-    'bitmap.js',
-    'cacheBackup.js',
-    'db.js',
-    'filesManager.js',
-    'utils.js',
-    'ShareitLocal.js',
-
-    'hasher/index.js',
-
-    'lib/BoolArray.js',
-    'lib/dropbox.min.js',
-
-    'lib/zip.js/deflate.js',
-    'lib/zip.js/inflate.js',
-    'lib/zip.js/zip.js',
-    'lib/zip.js/zip-fs.js',
-    'lib/zip.js/mime-types.js',
-
-    'polyfills/FileWriter.js',
-    'polyfills/IndexedDB-javascript.js',
-
-    'sharedpoints/index.js',
-    'sharedpoints/dropbox.js',
-    'sharedpoints/mega.js',
-
-    'transport/host.js',
-    'transport/peer.js',
-    'transport/search.js');
+importScripts('../lib/webp2p.js',
+              '../lib/shareit-core.js')
 
 
 var methods = {}

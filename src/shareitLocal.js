@@ -1,7 +1,4 @@
-var shareit = (function(module){
-var _priv = module._priv = module._priv || {}
-
-module.Local = function(handshake_servers, callback)
+function Local(handshake_servers, callback)
 {
   var self = this
 
@@ -15,7 +12,7 @@ module.Local = function(handshake_servers, callback)
   var webp2p = new WebP2P(handshake_servers, ['fileslist','search','transfer'])
 
   // Init database
-  _priv.DB_init(function(error, db)
+  DB_init(function(error, db)
   {
     if(error)
     {
@@ -24,16 +21,16 @@ module.Local = function(handshake_servers, callback)
     }
 
     // Init files manager
-    var filesManager = new _priv.FilesManager(db, webp2p)
+    var filesManager = new FilesManager(db, webp2p)
 
     // Init cache backup system
-    var cacheBackup = new _priv.CacheBackup(db, filesManager)
+    var cacheBackup = new CacheBackup(db, filesManager)
 
     // Init sharedpoints manager
-    var sharedpointsManager = new _priv.SharedpointsManager(db)
+    var sharedpointsManager = new SharedpointsManager(db)
 
     // Init search engine
-    var searchEngine = new _priv.SearchEngine(db, filesManager)
+    var searchEngine = new SearchEngine(db, filesManager)
 
 
     self.cacheBackup_export = function(onfinish, onprogress, onerror)
@@ -119,11 +116,11 @@ module.Local = function(handshake_servers, callback)
       switch(type)
       {
         case 'Entry':
-          sharedpoint = new _priv.Entry(root, db, filesManager)
+          sharedpoint = new Entry(root, db, filesManager)
           break
 
         case 'FileList':
-          sharedpoint = new _priv.FileList(root, db, filesManager)
+          sharedpoint = new FileList(root, db, filesManager)
           break
 
         default:
@@ -185,7 +182,9 @@ module.Local = function(handshake_servers, callback)
     callback(null, self)
   })
 }
-module.Local.prototype = new EventTarget()
+Local.prototype = new EventTarget()
 
-return module
-})(shareit || {})
+var shareit = shareit || {};
+    shareit.Local = Local;
+
+exports.shareit = shareit;

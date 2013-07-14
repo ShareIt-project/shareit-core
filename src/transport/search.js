@@ -1,7 +1,4 @@
-var shareit = (function(module){
-var _priv = module._priv = module._priv || {}
-
-_priv.Transport_Search_init = function(transport, db, webp2p)
+function Transport_Search_init(transport, db, webp2p)
 {
   transport.search = function(text)
   {
@@ -65,7 +62,4 @@ _priv.Transport_Search_init = function(transport, db, webp2p)
     console.log('Opened datachannel "' + channel.label + '"');
   })
 }
-_priv.Transport_Search_init.prototype = new EventTarget();
-
-return module
-})(shareit || {})
+Transport_Search_init.prototype = new EventTarget();

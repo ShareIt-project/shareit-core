@@ -1,12 +1,9 @@
-var shareit = (function(module){
-var _priv = module._priv = module._priv || {}
-
 /**
  * Update the SharedPoints and hash its files
  * @param {IDBDatabase} db ShareIt! database.
  * @param {?Function} policy Function to manage the policy access.
  */
-_priv.Hasher = function(db, policy, sharedpointsManager)
+function Hasher(db, policy, sharedpointsManager)
 {
   var queue = [];
   var timeout;
@@ -197,6 +194,3 @@ _priv.Hasher = function(db, policy, sharedpointsManager)
     });
   };
 }
-
-return module
-})(shareit || {})

@@ -1,12 +1,10 @@
-(function(module){
-
 /**
  * @classdesc Memory and band-width optimized Bitmap object with random access.
  * @constructor
  * @augments BoolArray
  * @param {Number} length Size of the {Bitmap}.
  */
-module.Bitmap = function(length)
+function Bitmap(length)
 {
   this.prototype = new BoolArray(length);
 
@@ -51,5 +49,3 @@ module.Bitmap = function(length)
     this.prototype.set(index, value);
   };
 }
-
-})(this)

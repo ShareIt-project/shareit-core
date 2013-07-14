@@ -1,10 +1,6 @@
-var shareit = (function(module){
-var _priv = module._priv = module._priv || {}
-
-
-_priv.Transport_Fileslist_init = function(transport, db, filesManager, peer_uid)
+function Transport_Fileslist_init(transport, db, filesManager, peer_uid)
 {
-  _priv.Transport_init(transport);
+  Transport_init(transport);
 
   var send_updates = false;
 
@@ -263,6 +259,3 @@ _priv.Transport_Fileslist_init = function(transport, db, filesManager, peer_uid)
     transport.fileslist_query(flags)
   })
 }
-
-return module
-})(shareit || {})

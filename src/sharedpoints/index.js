@@ -1,7 +1,4 @@
-var shareit = (function(module){
-var _priv = module._priv = module._priv || {}
-
-_priv.Sharedpoint = function(db, filesManager)
+function Sharedpoint(db, filesManager)
 {
   var self = this
 
@@ -88,17 +85,17 @@ _priv.Sharedpoint = function(db, filesManager)
     {
       // Increase sharedpoint shared size
       self.size += fileentry.file.size;
-  
+
       db.sharepoints_put(self, function(error, sharedpoint)
       {
         if(error)
           console.error(error)
-  
+
         else
         {
           var event = document.createEvent("Event");
               event.initEvent('sharedpoints.update',true,true);
-  
+
           filesManager.dispatchEvent(event);
         }
       });
@@ -132,7 +129,7 @@ _priv.Sharedpoint = function(db, filesManager)
 }
 
 
-_priv.SharedpointsManager = function(db)
+SharedpointsManager = function(db)
 {
   var self = this;
 
@@ -208,6 +205,3 @@ _priv.SharedpointsManager = function(db)
     });
   };
 }
-
-return module
-})(shareit || {})
