@@ -2,8 +2,8 @@
  * Worker to hash and check existence of a file
  */
 
-
-importScripts('../lib/sha512.js');
+if(!jsSHA)
+  importScripts('../lib/sha512.js');
 
 
 /**

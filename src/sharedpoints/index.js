@@ -204,4 +204,4 @@ SharedpointsManager = function(db)
         onsuccess(result)
     });
   };
-}
+};
