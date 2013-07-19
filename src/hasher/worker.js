@@ -36,6 +36,10 @@ function hashFileentry(fileentry)
       self.postMessage(['hashed', fileentry]);
     });
   };
+  reader.onerror = function(error)
+  {
+    console.log(error);
+  };
 
   reader.readAsBinaryString(fileentry.file);
 }
