@@ -21,12 +21,15 @@ function SearchEngine(db, filesManager)
         self.add(fileentry)
   })
 
+  function id(fileentry)
+  {
+    return JSON.stringify([fileentry.peer, fileentry.sharedpoint,
+                           fileentry.path, fileentry.name])
+  }
+
   this.add = function(fileentry)
   {
-    var id = JSON.stringify([fileentry.peer, fileentry.sharedpoint,
-                             fileentry.path, fileentry.name])
-
-    searchIndex.add({id:          id,
+    searchIndex.add({id:          id(fileentry),
                      sharedpoint: fileentry.sharedpoint,
                      path:        fileentry.path,
                      name:        fileentry.name})
@@ -34,18 +37,12 @@ function SearchEngine(db, filesManager)
 
   this.remove = function(fileentry)
   {
-    var id = JSON.stringify([fileentry.peer, fileentry.sharedpoint,
-                             fileentry.path, fileentry.name])
-
-    searchIndex.remove({id: id})
+    searchIndex.remove({id: id(fileentry)})
   }
 
   function update(fileentry)
   {
-    var id = JSON.stringify([fileentry.peer, fileentry.sharedpoint,
-                             fileentry.path, fileentry.name])
-
-    searchIndex.update({id:          id,
+    searchIndex.update({id:          id(fileentry),
                         sharedpoint: fileentry.sharedpoint,
                         path:        fileentry.path,
                         name:        fileentry.name})
