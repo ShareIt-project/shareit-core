@@ -29,9 +29,6 @@ function Local(handshake_servers, callback)
     // Init sharedpoints manager
     var sharedpointsManager = new SharedpointsManager(db)
 
-    // Init search engine
-    var searchEngine = new SearchEngine(db, filesManager)
-
 
     self.cacheBackup_export = function(onfinish, onprogress, onerror)
     {
@@ -106,7 +103,7 @@ function Local(handshake_servers, callback)
 
     self.searchEngine_search = function(query, callback)
     {
-      searchEngine.search(query, callback)
+      filesManager.search(query, callback)
     }
 
     self.sharedpointsManager_add = function(type, root, callback)

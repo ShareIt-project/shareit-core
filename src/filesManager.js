@@ -359,5 +359,13 @@ function FilesManager(db, webp2p)
     db.files_delete(fileentry)
     send_file_deleted(fileentry)
   }
+
+  // Init search engine
+  var searchEngine = new SearchEngine(db, this)
+
+  this.search = function(query, callback)
+  {
+    searchEngine.search(query, callback)
+  }
 }
 FilesManager.prototype = new EventTarget();
