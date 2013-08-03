@@ -3,7 +3,7 @@
   "version": "1.1.1",
   "description": "Core of the ShareIt! P2P filesharing application",
   "dependencies": {
-    "dropbox": "latest"
+    "dropbox": "latest",
     "WebP2P.io": "latest"
   },
   "devDependencies": {
