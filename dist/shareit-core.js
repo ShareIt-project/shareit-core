@@ -2585,8 +2585,8 @@ function Bitmap(length)
                     filesManager.updateFile(fileentry, chunk, data);
                   };
 
-                  var start = chunk * module.chunksize;
-                  var stop = start + module.chunksize;
+                  var start = chunk * chunksize;
+                  var stop  = start + chunksize;
 
                   blob.getBlob(zip.getMimeType(file.name), function(blob)
                   {
@@ -3205,7 +3205,7 @@ function FilesManager(db, webp2p)
 
     // Calc number of necesary chunks to download
     // and add a bitmap to our file stub
-    var chunks = fileentry.size / module.chunksize;
+    var chunks = fileentry.size / chunksize;
     if(chunks % 1 != 0)
        chunks = Math.floor(chunks) + 1;
 
@@ -3233,7 +3233,7 @@ function FilesManager(db, webp2p)
 
   this.transfer_update = function(fileentry, pending_chunks)
   {
-    var chunks = fileentry.blob.size / module.chunksize;
+    var chunks = fileentry.blob.size / chunksize;
     if(chunks % 1 != 0)
        chunks = Math.floor(chunks) + 1;
 
@@ -3276,7 +3276,7 @@ function FilesManager(db, webp2p)
     var fw = new FileWriter(fileentry.blob);
 
     // Calc and set pos, and increase blob size if necessary
-    var pos = chunk * module.chunksize;
+    var pos = chunk * chunksize;
     if(fw.length < pos)
        fw.truncate(pos);
     fw.seek(pos);
@@ -3395,6 +3395,14 @@ function FilesManager(db, webp2p)
     db.files_delete(fileentry)
     send_file_deleted(fileentry)
   }
+
+  // Init search engine
+  var searchEngine = new SearchEngine(db, this)
+
+  this.search = function(query, callback)
+  {
+    searchEngine.search(query, callback)
+  }
 }
 FilesManager.prototype = new EventTarget();function SearchEngine(db, filesManager)
 {
@@ -3419,12 +3427,15 @@ FilesManager.prototype = new EventTarget();function SearchEngine(db, filesManage
         self.add(fileentry)
   })
 
+  function id(fileentry)
+  {
+    return JSON.stringify([fileentry.peer, fileentry.sharedpoint,
+                           fileentry.path, fileentry.name])
+  }
+
   this.add = function(fileentry)
   {
-    var id = JSON.stringify([fileentry.peer, fileentry.sharedpoint,
-                             fileentry.path, fileentry.name])
-
-    searchIndex.add({id:          id,
+    searchIndex.add({id:          id(fileentry),
                      sharedpoint: fileentry.sharedpoint,
                      path:        fileentry.path,
                      name:        fileentry.name})
@@ -3432,18 +3443,12 @@ FilesManager.prototype = new EventTarget();function SearchEngine(db, filesManage
 
   this.remove = function(fileentry)
   {
-    var id = JSON.stringify([fileentry.peer, fileentry.sharedpoint,
-                             fileentry.path, fileentry.name])
-
-    searchIndex.remove({id: id})
+    searchIndex.remove({id: id(fileentry)})
   }
 
   function update(fileentry)
   {
-    var id = JSON.stringify([fileentry.peer, fileentry.sharedpoint,
-                             fileentry.path, fileentry.name])
-
-    searchIndex.update({id:          id,
+    searchIndex.update({id:          id(fileentry),
                         sharedpoint: fileentry.sharedpoint,
                         path:        fileentry.path,
                         name:        fileentry.name})
@@ -3615,9 +3620,6 @@ FilesManager.prototype = new EventTarget();function SearchEngine(db, filesManage
     // Init sharedpoints manager
     var sharedpointsManager = new SharedpointsManager(db)
 
-    // Init search engine
-    var searchEngine = new SearchEngine(db, filesManager)
-
 
     self.cacheBackup_export = function(onfinish, onprogress, onerror)
     {
@@ -3692,7 +3694,7 @@ FilesManager.prototype = new EventTarget();function SearchEngine(db, filesManage
 
     self.searchEngine_search = function(query, callback)
     {
-      searchEngine.search(query, callback)
+      filesManager.search(query, callback)
     }
 
     self.sharedpointsManager_add = function(type, root, callback)
@@ -4942,8 +4944,8 @@ function Transport_Transfer_init(transport, db, filesManager)
       transport.emit('transfer.send', hash, chunk, evt.target.result);
     };
 
-    var start = chunk * module.chunksize;
-    var stop = start + module.chunksize;
+    var start = chunk * chunksize;
+    var stop  = start + chunksize;
 
     function readSlice(blob)
     {

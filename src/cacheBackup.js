@@ -119,8 +119,8 @@ function CacheBackup(db, filesManager)
                     filesManager.updateFile(fileentry, chunk, data);
                   };
 
-                  var start = chunk * module.chunksize;
-                  var stop = start + module.chunksize;
+                  var start = chunk * chunksize;
+                  var stop  = start + chunksize;
 
                   blob.getBlob(zip.getMimeType(file.name), function(blob)
                   {

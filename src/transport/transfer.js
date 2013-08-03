@@ -40,8 +40,8 @@ function Transport_Transfer_init(transport, db, filesManager)
       transport.emit('transfer.send', hash, chunk, evt.target.result);
     };
 
-    var start = chunk * module.chunksize;
-    var stop = start + module.chunksize;
+    var start = chunk * chunksize;
+    var stop  = start + chunksize;
 
     function readSlice(blob)
     {
