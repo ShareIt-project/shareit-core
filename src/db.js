@@ -1,5 +1,3 @@
-var indexedDB = indexedDB || webkitIndexedDB || mozIndexedDB || msIndexedDB;
-
 /**
  * Initializes the database
  * @param {Function} callback Callback called when database is ready.
