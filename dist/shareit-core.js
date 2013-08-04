@@ -4175,8 +4175,6 @@ function Hasher(db, policy, sharedpointsManager)
   {
 //    console.info("Hashing sharedpoint '"+this.name+"'...")
 
-    var self = this
-
     // Get all files currently indexed to delete removed old ones
     db.files_getAll_byPeer("", function(error, fileentries)
     {
