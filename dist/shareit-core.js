@@ -4900,25 +4900,13 @@ Transport_init.prototype = new EventTarget();function Transport_Fileslist_init(t
     console.log('Opened datachannel "' + channel.label + '"');
   })
 }
-Transport_Search_init.prototype = new EventTarget();// Filereader support (be able to host files from the filesystem)
-if(typeof FileReader == 'undefined')
-{
-  console.warn("'Filereader' is not available, can't be able to host files");
-  No_FileReader();
-}
-
-
-/**
+Transport_Search_init.prototype = new EventTarget();/**
  * Addapt a transport layer to be used as a host
  * @param transport
  * @param {IDBdatabase} db ShareIt! database.
  */
 function Transport_Transfer_init(transport, db, filesManager)
 {
-  // Filereader support (be able to host files from the filesystem)
-  if(typeof FileReader == 'undefined')
-    return;
-
   Transport_init(transport);
 
   /**

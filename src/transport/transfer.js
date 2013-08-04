@@ -1,11 +1,3 @@
-// Filereader support (be able to host files from the filesystem)
-if(typeof FileReader == 'undefined')
-{
-  console.warn("'Filereader' is not available, can't be able to host files");
-  No_FileReader();
-}
-
-
 /**
  * Addapt a transport layer to be used as a host
  * @param transport
@@ -13,10 +5,6 @@ if(typeof FileReader == 'undefined')
  */
 function Transport_Transfer_init(transport, db, filesManager)
 {
-  // Filereader support (be able to host files from the filesystem)
-  if(typeof FileReader == 'undefined')
-    return;
-
   Transport_init(transport);
 
   /**
